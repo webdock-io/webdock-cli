@@ -24,21 +24,24 @@ Deno.test({
 		});
 
 		const output = await accountInfo.output();
-
 		const stdout = decoder.decode(output.stdout);
+		const stderr = decoder.decode(output.stderr);
+		const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-		expect(output.success).toBe(true);
-		await t.step("To Contain ID", () => {
-			expect(stdout).toContain("ID");
+		await t.step("Command exits successfully", () => {
+			expect(output.success, `'account info' command failed.${ctx}`).toBe(true);
 		});
-		await t.step("To Contain Name", () => {
-			expect(stdout).toContain("Name");
+		await t.step("Output contains 'ID'", () => {
+			expect(stdout, `Expected output to contain 'ID'.${ctx}`).toContain("ID");
 		});
-		await t.step("To Contain Team Leader", () => {
-			expect(stdout).toContain("Team Leader");
+		await t.step("Output contains 'Name'", () => {
+			expect(stdout, `Expected output to contain 'Name'.${ctx}`).toContain("Name");
 		});
-		await t.step("To Contain Balance", () => {
-			expect(stdout).toContain("Balance");
+		await t.step("Output contains 'Team Leader'", () => {
+			expect(stdout, `Expected output to contain 'Team Leader'.${ctx}`).toContain("Team Leader");
+		});
+		await t.step("Output contains 'Balance'", () => {
+			expect(stdout, `Expected output to contain 'Balance'.${ctx}`).toContain("Balance");
 		});
 	},
 });

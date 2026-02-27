@@ -1,7 +1,8 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { stringify } from "csv-stringify/sync";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const updateCommand = new Command()
 	.description("Update an account script")
@@ -24,13 +25,13 @@ export const updateCommand = new Command()
 			filename: string,
 			content: string,
 		) => {
-			const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+			const token = await getToken(options.token);
+			const client = new Webdock(token);
 			const response = await client.scripts.update({
 				name: name,
 				filename: filename,
 				content: content,
 				id: id,
-				token: options.token,
 			});
 
 			if (!response.success) {
@@ -50,7 +51,7 @@ export const updateCommand = new Command()
 					"filename",
 					"content",
 				] as const;
-				const cvsData = response.data.body as unknown as Record<
+				const cvsData = response.response.body as unknown as Record<
 					string,
 					unknown
 				>;
@@ -61,7 +62,7 @@ export const updateCommand = new Command()
 				console.log(stringify([data], { columns: keys, header: true }));
 				return;
 			}
-			const data = response.data.body;
+			const data = response.response.body;
 			new Table().header([
 				"ID",
 				"Name",

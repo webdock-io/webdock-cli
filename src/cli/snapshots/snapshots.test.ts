@@ -6,9 +6,9 @@ const decoder = new TextDecoder();
 let tempServerSlug = "";
 let test_snapshotId = 0;
 Deno.test({
-	name: "Test Servers CLI",
+	name: "Test Snapshots CLI",
 	fn: async (t) => {
-		await t.step("[CLI] Create Temp Server", async () => {
+		await t.step("[CLI] Create Temp Server", async (it) => {
 			const tempServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -21,9 +21,9 @@ Deno.test({
 					"create",
 					`temp-${Date.now()}`,
 					"dk",
-					"webdockbit-2024",
+					"wp-business-2026",
 					"-i",
-					"krellide:webdock-noble-lamp",
+					"webdock-ubuntu-jammy-cloud",
 					"--slug",
 					`temp-${Date.now()}`,
 					"--wait",
@@ -34,15 +34,18 @@ Deno.test({
 
 			const output = await tempServer.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers create' command failed.${ctx}`).toBe(true);
+			});
 
 			const slugs = extractSlugsFromStdOut(stdout);
-
 			tempServerSlug = slugs[0] ?? "";
 		});
 
-		await t.step("[CLI] Create a snapshot", async () => {
+		await t.step("[CLI] Create a snapshot", async (it) => {
 			const test_snapshot = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -63,15 +66,18 @@ Deno.test({
 
 			const output = await test_snapshot.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'snapshots create' on server '${tempServerSlug}' failed.${ctx}`).toBe(true);
+			});
 
 			const ids = extractIdsFromStdOut(stdout);
-
-			test_snapshotId = ids[0] ?? "";
+			test_snapshotId = ids[0] ?? 0;
 		});
 
-		await t.step("[CLI] delete a snapshot", async () => {
+		await t.step("[CLI] Delete a snapshot", async (it) => {
 			const delete_test_snapshot = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -81,7 +87,7 @@ Deno.test({
 					"--allow-net",
 					join(Deno.cwd(), "src", "main.ts"),
 					"snapshots",
-					"create",
+					"delete",
 					tempServerSlug,
 					String(test_snapshotId),
 					"--wait",
@@ -91,8 +97,13 @@ Deno.test({
 			});
 
 			const output = await delete_test_snapshot.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'snapshots delete ${test_snapshotId}' on server '${tempServerSlug}' failed.${ctx}`).toBe(true);
+			});
 		});
 	},
 });

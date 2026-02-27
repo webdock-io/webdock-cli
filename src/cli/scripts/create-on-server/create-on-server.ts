@@ -1,9 +1,11 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { wrapId } from "../../../test_utils.ts";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { sanitizePath } from "../../../utils/sanitize-path.ts";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
+
 // Add Deno namespace declaration
 declare namespace Deno {
 	export function exit(code: number): never;
@@ -39,7 +41,8 @@ export const serverScriptsCreateCommand = new Command()
 	)
 	.action(
 		async (options, serverSlug: string, scriptId: number, path) => {
-			const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+			const token = await getToken(options.token);
+			const client = new Webdock(token);
 			const sanitizedPath = await sanitizePath(path);
 			if (!sanitizedPath) {
 				serverScriptsCreateCommand.showHelp();
@@ -51,7 +54,6 @@ export const serverScriptsCreateCommand = new Command()
 				path: sanitizedPath,
 				makeScriptExecutable: options.executable,
 				executeImmediately: options.executeImmediately,
-				token: options.token,
 				serverSlug,
 			});
 
@@ -64,12 +66,12 @@ export const serverScriptsCreateCommand = new Command()
 			}
 
 			if (options.json) {
-				console.log(JSON.stringify(response.data));
+				console.log(JSON.stringify(response.response));
 				return;
 			}
 
 			if (options.csv) {
-				const data = response.data.body as unknown as Record<string, unknown>;
+				const data = response.response.body as unknown as Record<string, unknown>;
 
 				const keys = [
 					"id",
@@ -87,7 +89,7 @@ export const serverScriptsCreateCommand = new Command()
 				return;
 			}
 
-			const data = response.data.body;
+			const data = response.response.body;
 
 			new Table().header([
 				"ID",

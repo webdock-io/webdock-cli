@@ -1,7 +1,8 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { stringify } from "csv-stringify/sync";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const getCommand = new Command()
 	.description("Get an account script by ID")
@@ -17,10 +18,10 @@ export const getCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, id: number) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.scripts.getById({
 			scriptId: id,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -29,10 +30,10 @@ export const getCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
-		const data = response.data.body;
+		const data = response.response.body;
 
 		if (options.csv) {
 			const keys = [
@@ -42,14 +43,14 @@ export const getCommand = new Command()
 				"filename",
 				"content",
 			] as const;
-			const body = response.data.body as unknown as Record<string, unknown>;
+			const body = response.response.body as unknown as Record<string, unknown>;
 
-			const data = keys.map((key) => {
+			const csvData = keys.map((key) => {
 				if (key == "content") return "[Content Hidden]";
 				return body[key] || "N/A";
 			});
 
-			console.log(stringify([data], {
+			console.log(stringify([csvData], {
 				columns: keys,
 				header: true,
 			}));

@@ -2,7 +2,8 @@ import { stringify } from "csv-stringify/sync";
 import { wrapId } from "../../../test_utils.ts";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.name("list")
@@ -16,10 +17,10 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, serverSlug) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.shellUsers.list({
 			serverSlug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -28,12 +29,12 @@ export const listCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			Deno.exit(0);
 		}
 
 		if (options.csv) {
-			const data = response.data.body as unknown as Record<string, unknown>[];
+			const data = response.response.body as unknown as Record<string, unknown>[];
 			const keys = [
 				"id",
 				"username",
@@ -71,7 +72,7 @@ export const listCommand = new Command()
 				"Public Keys",
 			])
 			.body(
-				response.data.body.map((user) => [
+				response.response.body.map((user) => [
 					wrapId(user.id),
 					user.username,
 					user.group,

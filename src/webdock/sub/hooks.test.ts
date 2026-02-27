@@ -34,7 +34,8 @@ let testHook: any | null;
 Deno.test({
 	name: "Webhooks API - Create New Webhook",
 	fn: async (it) => {
-		const randomTestUrl = "https://addel.vip?" + Math.random().toString();
+		const randomTestUrl =  `https://httpbin.org/status/200?qs=${Date.now()}` ;
+
 		const testEventType = "backup";
 		const response = await client.hooks.create({
 			callbackUrl: randomTestUrl,

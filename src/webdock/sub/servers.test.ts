@@ -24,7 +24,7 @@ Deno.test({
 		const local_Server = await client.servers.create({
 			name: `temp-${Date.now()}`,
 			locationId: "dk",
-			profileSlug: "webdockepyc-premium",
+			profileSlug: "wp-business-2026",
 			imageSlug: "krellide:webdock-noble-lemp",
 			slug: `temp-${Date.now()}`,
 		});

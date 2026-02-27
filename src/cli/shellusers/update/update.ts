@@ -1,9 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { wrapId } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
-
+import { getToken } from "../../../config.ts";
 export const updateCommand = new Command()
 	.name("update")
 	.description("Update a shell user's public keys")
@@ -24,7 +24,8 @@ export const updateCommand = new Command()
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.option("-t, --token <token:string>", "API token for authentication")
 	.action(async (options, slug, id) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.shellUsers.edit({
 			keys: options.publicKeys || [],
 			slug: slug,
@@ -41,16 +42,20 @@ export const updateCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
 		if (options.csv) {
-			const data = response.data.body as unknown as Record<string, unknown>;
+			const data = response.response.body as unknown as Record<string, unknown>;
 			const keys = [
 				"id",
 				"username",
@@ -75,7 +80,7 @@ export const updateCommand = new Command()
 			return;
 		}
 
-		const data = response.data.body;
+		const data = response.response.body;
 		new Table().header([
 			"ID",
 			"Username",

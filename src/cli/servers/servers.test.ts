@@ -7,7 +7,7 @@ let tempServerSlug = "";
 Deno.test({
 	name: "Test Servers CLI",
 	fn: async (t) => {
-		await t.step("[CLI] Create Temp Server", async () => {
+		await t.step("[CLI] Create Temp Server", async (it) => {
 			const creatServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -20,33 +20,44 @@ Deno.test({
 					"create",
 					`temp-${Date.now()}`,
 					"dk",
-					"webdockbit-2024",
+					"wp-business-2026",
 					"-i",
-					"krellide:webdock-noble-lamp",
+					"webdock-ubuntu-jammy-cloud",
 					"--slug",
 					`temp-${Date.now()}`,
 					"--wait",
 				],
-
 				stdout: "piped",
 				stderr: "piped",
 			});
 
 			const output = await creatServer.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
-			expect(stdout).toContain("Slug");
-			expect(stdout).toContain("Name");
-			expect(stdout).toContain("Location");
-			expect(stdout).toContain("IP");
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers create' command failed.${ctx}`).toBe(true);
+			});
+			await it.step("Output contains 'Slug'", () => {
+				expect(stdout, `Expected output to contain 'Slug'.${ctx}`).toContain("Slug");
+			});
+			await it.step("Output contains 'Name'", () => {
+				expect(stdout, `Expected output to contain 'Name'.${ctx}`).toContain("Name");
+			});
+			await it.step("Output contains 'Location'", () => {
+				expect(stdout, `Expected output to contain 'Location'.${ctx}`).toContain("Location");
+			});
+			await it.step("Output contains 'IP'", () => {
+				expect(stdout, `Expected output to contain 'IP'.${ctx}`).toContain("IP");
+			});
 
 			const slugs = extractSlugsFromStdOut(stdout);
-
 			tempServerSlug = slugs[0] ?? "";
+ 			
 		});
 
-		await t.step("[CLI] GET Temp Server", async () => {
+		await t.step("[CLI] GET Temp Server", async (it) => {
 			const getServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -64,20 +75,31 @@ Deno.test({
 			});
 
 			const output = await getServer.output();
-
-			expect(output.success).toBe(true);
-
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
-			expect(stdout).toContain("Slug");
-			expect(stdout).toContain("Name");
-			expect(stdout).toContain("Location");
-			expect(stdout).toContain("Status");
-			expect(stdout).toContain("IP");
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers get ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
+			await it.step("Output contains 'Slug'", () => {
+				expect(stdout, `Expected output to contain 'Slug'.${ctx}`).toContain("Slug");
+			});
+			await it.step("Output contains 'Name'", () => {
+				expect(stdout, `Expected output to contain 'Name'.${ctx}`).toContain("Name");
+			});
+			await it.step("Output contains 'Location'", () => {
+				expect(stdout, `Expected output to contain 'Location'.${ctx}`).toContain("Location");
+			});
+			await it.step("Output contains 'Status'", () => {
+				expect(stdout, `Expected output to contain 'Status'.${ctx}`).toContain("Status");
+			});
+			await it.step("Output contains 'IP'", () => {
+				expect(stdout, `Expected output to contain 'IP'.${ctx}`).toContain("IP");
+			});
 		});
 
-		await t.step("[CLI] Reboot Temp Server", async () => {
+		await t.step("[CLI] Reboot Temp Server", async (it) => {
 			const rebootServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -96,11 +118,16 @@ Deno.test({
 			});
 
 			const output = await rebootServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers reboot ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] stop Temp Server", async () => {
+		await t.step("[CLI] Stop Temp Server", async (it) => {
 			const stopServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -119,11 +146,16 @@ Deno.test({
 			});
 
 			const output = await stopServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers stop ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] resize Temp Server", async () => {
+		await t.step("[CLI] Resize Temp Server", async (it) => {
 			const resizeServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -135,7 +167,7 @@ Deno.test({
 					"servers",
 					"resize",
 					tempServerSlug,
-					"webdockpremium-2024",
+					"wp-pro-2026",
 					"--wait",
 				],
 				stdout: "piped",
@@ -143,12 +175,17 @@ Deno.test({
 			});
 
 			const output = await resizeServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers resize ${tempServerSlug} webdockpremium-2024' command failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] resinstall Temp Server", async () => {
-			const resizeServer = new Deno.Command("deno", {
+		await t.step("[CLI] Reinstall Temp Server", async (it) => {
+			const reinstallServer = new Deno.Command("deno", {
 				args: [
 					"run",
 					"--allow-env",
@@ -166,12 +203,17 @@ Deno.test({
 				stderr: "piped",
 			});
 
-			const output = await resizeServer.output();
+			const output = await reinstallServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers reinstall ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] update Temp Server", async () => {
+		await t.step("[CLI] Update Temp Server", async (it) => {
 			const updateServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -193,11 +235,16 @@ Deno.test({
 			});
 
 			const output = await updateServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers update ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] delete Temp Server", async () => {
+		await t.step("[CLI] Delete Temp Server", async (it) => {
 			const deleteServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -216,8 +263,13 @@ Deno.test({
 			});
 
 			const output = await deleteServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers delete ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 	},
 });

@@ -1,8 +1,9 @@
 import { wrapId } from "../../../test_utils.ts";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const createCommand = new Command()
 	.name("create")
@@ -26,7 +27,8 @@ export const createCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, serverSlug, username, password) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.shellUsers.create({
 			username: username,
 			password: password,
@@ -34,7 +36,6 @@ export const createCommand = new Command()
 			shell: options.shell,
 			publicKeys: options.publicKeys ?? [],
 			serverSlug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -43,18 +44,22 @@ export const createCommand = new Command()
 			Deno.exit(1);
 		}
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
-		const data = response.data.body;
+		const data = response.response.body;
 
 		if (options.csv) {
-			const data = response.data.body as unknown as Record<string, unknown>;
+			const csvData = response.response.body as unknown as Record<string, unknown>;
 			const keys = [
 				"id",
 				"username",
@@ -65,9 +70,9 @@ export const createCommand = new Command()
 			] as const;
 			const body = keys.map((key) => {
 				if (key == "publicKeys") {
-					return (data[key] as { id: number }[]).map((e) => e.id).join(",");
+					return (csvData[key] as { id: number }[]).map((e) => e.id).join(",");
 				}
-				return data[key];
+				return csvData[key];
 			});
 			console.log(
 				stringify([body], {

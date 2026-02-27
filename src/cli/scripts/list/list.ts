@@ -1,8 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { wrapId } from "../../../test_utils.ts";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.name("list")
@@ -18,9 +19,10 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 
-		const response = await client.scripts.list(options.token);
+		const response = await client.scripts.list();
 		if (!response.success) {
 			console.error(response.error);
 			Deno.exit(1);
@@ -34,7 +36,7 @@ export const listCommand = new Command()
 				"filename",
 				"content",
 			] as const;
-			const cvsData = response.data.body as unknown as Record<
+			const cvsData = response.response.body as unknown as Record<
 				string,
 				unknown
 			>[];
@@ -49,14 +51,14 @@ export const listCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			Deno.exit(0);
 		}
 
 		new Table()
 			.header(["ID", "Name", "Description", "Filename", "Content"])
 			.body(
-				response.data.body.map((script) => [
+				response.response.body.map((script) => [
 					wrapId(script.id),
 					script.name,
 					script.description || "N/A",

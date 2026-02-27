@@ -1,9 +1,10 @@
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { wrapSlug } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.name("list")
@@ -19,21 +20,22 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
-		const response = await client.servers.list(options.token);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
+		const response = await client.servers.list();
 
 		if (!response.success) {
 			console.error(colors.bgRed.bold.underline.italic(response.error));
 			Deno.exit(1);
 		}
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
 		if (options.csv) {
 			const keys = ["slug", "name", "location", "status", "ipv4"] as const;
-			const data = response.data.body as unknown as Record<string, unknown>[];
+			const data = response.response.body as unknown as Record<string, unknown>[];
 			const body = data.map((item) => {
 				return keys.map((key) => {
 					return item[key];
@@ -59,7 +61,7 @@ export const listCommand = new Command()
 				"SSH Auth",
 			])
 			.body(
-				response.data.body.map((server) => [
+				response.response.body.map((server) => [
 					server.name,
 					server.location,
 					server.status,

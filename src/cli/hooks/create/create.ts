@@ -2,10 +2,11 @@ import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { z } from "zod";
 import { colors } from "@cliffy/ansi/colors";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { wrapId } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
 import { eventTypeEnum } from "../../event-types.ts";
+import { getToken } from "../../../config.ts";
 
 export const createCommand = new Command()
 	.name("create")
@@ -36,9 +37,9 @@ export const createCommand = new Command()
 			createCommand.showHelp();
 			Deno.exit(1);
 		}
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.hooks.create({
-			token: options.token,
 			callbackUrl: callbackUrl,
 			callbackId: options.callbackId,
 			eventType: options.eventType as unknown as string,
@@ -50,7 +51,7 @@ export const createCommand = new Command()
 		}
 
 		if (options.csv) {
-			const csvData: Record<string, unknown> = response.data.body;
+			const csvData: Record<string, unknown> = response.response.body;
 			const keys = ["id", "callbackUrl", "filters"];
 
 			// Process array data
@@ -70,11 +71,11 @@ export const createCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
-		const data = response.data.body;
+		const data = response.response.body;
 
 		const table = new Table().header(["ID", "Callback URL", "Filters"]).body([
 			[

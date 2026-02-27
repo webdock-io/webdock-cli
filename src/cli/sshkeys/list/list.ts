@@ -2,7 +2,8 @@ import { stringify } from "csv-stringify/sync";
 import { wrapId } from "../../../test_utils.ts";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.description("List all SSH keys")
@@ -14,19 +15,20 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
-		const response = await client.sshkeys.list({ token: options.token });
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
+		const response = await client.sshkeys.list();
 
 		if (!response.success) {
 			console.error(response.error);
 			Deno.exit(1);
 		}
 
-		response.data.body.forEach((e) => e.key = "🔒 CLI security: key hidden");
+		response.response.body.forEach((e) => e.key = "🔒 CLI security: key hidden");
 
 		if (options.csv) {
 			const keys = ["id", "name", "key", "created"] as const;
-			const res = response.data.body as unknown as Record<string, unknown>[];
+			const res = response.response.body as unknown as Record<string, unknown>[];
 			const data = res.map((item) => {
 				return keys.map((key) => {
 					if (key == "key") return "[Key Hidden]";
@@ -42,7 +44,7 @@ export const listCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
@@ -50,7 +52,7 @@ export const listCommand = new Command()
 			.header(["ID", "Name", "Key", "Created"])
 			.align("center")
 			.body(
-				response.data.body.map((key) => [
+				response.response.body.map((key) => [
 					wrapId(key.id),
 					key.name,
 					key.key,

@@ -17,7 +17,7 @@ Deno.test({
           name: "test-script-server",
           locationId: "dk",
           slug: `server-${Math.random()}`,
-          profileSlug: "webdockepyc-bit",
+          profileSlug: "wp-starter-2026",
           imageSlug: "webdock-ubuntu-jammy-cloud",
         });
 

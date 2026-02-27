@@ -1,8 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { wrapId } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const getCommand = new Command()
 	.name("get")
@@ -19,17 +20,17 @@ export const getCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, id: number) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.hooks.getById({
 			id: id,
-			token: options.token,
 		});
 
 		if (!response.success) {
 			Deno.exit(1);
 		}
 		if (options.csv) {
-			const csvData: Record<string, unknown> = response.data.body;
+			const csvData: Record<string, unknown> = response.response.body;
 			const keys = ["id", "callbackUrl", "filters"];
 
 			// Process array data
@@ -49,7 +50,7 @@ export const getCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
@@ -57,10 +58,10 @@ export const getCommand = new Command()
 			.header(["ID", "Callback URL", "Filters"])
 			.body([
 				[
-					wrapId(response.data.body.id),
-					response.data.body.callbackUrl,
-					response.data.body.filters
-						? response.data.body.filters.map((f) => `${f.type}:${f.value}`)
+					wrapId(response.response.body.id),
+					response.response.body.callbackUrl,
+					response.response.body.filters
+						? response.response.body.filters.map((f) => `${f.type}:${f.value}`)
 							.join("\n")
 						: "None",
 				],

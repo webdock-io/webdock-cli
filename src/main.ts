@@ -1,6 +1,6 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-net --allow-run
 
-import { imageEnum, profileEnum } from "./cliffy-enums.ts";
+
 import { Command } from "@cliffy/command";
 import { Webdock } from "./webdock/webdock.ts";
 import { accountCommand } from "./cli/account/mod.ts";
@@ -25,8 +25,7 @@ export const cli = new Command()
   .name("webdock")
   .version("v1.0.0")
   .globalType("event-type", eventTypeEnum)
-  .globalType("profile", profileEnum)
-  .globalType("image", imageEnum)
+ 
   .description("Webdock CLI - A command-line interface for the Webdock API")
   .default("it")
   .command(

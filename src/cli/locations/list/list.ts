@@ -1,7 +1,8 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { stringify } from "csv-stringify/sync";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.description("List all locations")
@@ -16,8 +17,9 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
-		const response = await client.location.list(options.token);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
+		const response = await client.location.list();
 
 		if (!response.success) {
 			console.error(response.error);
@@ -30,9 +32,9 @@ export const listCommand = new Command()
 		}
 
 		if (options.csv) {
-			const keys = Object.keys(response.data.body[0]);
+			const keys = Object.keys(response.response.body[0]);
 
-			const csvData = response.data.body.reduce(
+			const csvData = response.response.body.reduce(
 				(acc: unknown[], item: Record<string, unknown>) => {
 					acc.push(keys.map((key) => item[key] ?? "N/A"));
 					return acc;
@@ -44,14 +46,14 @@ export const listCommand = new Command()
 			Deno.exit(0);
 		}
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 		// Display in table format if --table flag is used
 		const table = new Table()
 			.header(["ID", "Name", "Country", "City"])
 			.body(
-				response.data.body.map((location) => [
+				response.response.body.map((location) => [
 					location.id,
 					location.name,
 					location.country || "N/A",

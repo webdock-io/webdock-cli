@@ -5,10 +5,9 @@
 	},
 	"tasks": {
 		"fmt": "deno fmt --watch *",
-		"test": "deno test --allow-read --allow-write --allow-env --allow-run --allow-net --no-check"
+		"test:cli": "TESTING=true && deno test --allow-read --allow-write --allow-env --allow-run --allow-net --no-check src/cli"
 	},
 	"unstable": ["bare-node-builtins"],
-
 	"imports": {
 		"@cliffy/ansi": "jsr:@cliffy/ansi@^1.0.0-rc.8",
 		"@cliffy/command": "jsr:@cliffy/command@^1.0.0-rc.8",
@@ -27,7 +26,8 @@
 		"csv": "npm:csv@^6.3.11",
 		"csv-stringify": "npm:csv-stringify@^6.5.2",
 		"form-data": "npm:form-data@^4.0.2",
-		"zod": "npm:zod@^3.24.3"
+		"zod": "npm:zod@^3.24.3",
+		"@webdock/sdk":"npm:@webdock/sdk@^1.0.5962"
 	},
 	"fmt": {
 		"lineWidth": 200,

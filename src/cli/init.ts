@@ -1,5 +1,5 @@
 import { Command } from "@cliffy/command";
-import { client } from "../main.ts";
+import { saveConfig, getConfigPath } from "../config.ts";
 
 export const initCommand = new Command()
 	.name("init")
@@ -8,7 +8,7 @@ export const initCommand = new Command()
 		required: true,
 	})
 	.action(async (options) => {
-		await client.saveConfig({ token: options.token });
-		const configPath = client.getConfigPath();
+		await saveConfig({ token: options.token });
+		const configPath = getConfigPath();
 		console.log(`Configuration has been stored at: ${configPath}`);
 	});
