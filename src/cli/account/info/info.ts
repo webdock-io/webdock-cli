@@ -1,8 +1,8 @@
 import { Command } from "@cliffy/command";
-
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "npm:csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const infoCommand = new Command()
 	.name("Account Info!")
@@ -16,18 +16,16 @@ export const infoCommand = new Command()
 	})
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options) => {
-		const client = new Webdock(
-			!options.csv && !options.json,
-			!options.csv && !options.json,
-		);
-		const response = await client.account.info(options.token);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
+		const response = await client.account.info();
 
 		if (!response.success) {
 			Deno.exit(1);
 		}
 
 		if (options.csv) {
-			const cvsObject: Record<string, unknown> = response.data.body;
+			const cvsObject: Record<string, unknown> = response.response.body;
 			const keys = Object.keys(cvsObject);
 
 			console.log(
@@ -40,11 +38,11 @@ export const infoCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
-		const user = response.data.body;
+		const user = response.response.body;
 		new Table()
 			.header(["ID", "Name", "Email", "Team Leader", "Balance"])
 			.body([

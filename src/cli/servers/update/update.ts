@@ -1,8 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { wrapSlug } from "../../../test_utils.ts";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const updateCommand = new Command()
 	.description("Update server metadata")
@@ -24,14 +25,14 @@ export const updateCommand = new Command()
 			notes,
 			nextActionDate,
 		) => {
-			const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+			const token = await getToken(options.token);
+			const client = new Webdock(token);
 			const response = await client.servers.update({
 				nextActionDate,
 				name,
 				description,
 				notes,
 				serverSlug,
-				token: options.token,
 			});
 
 			if (!response.success) {
@@ -40,12 +41,12 @@ export const updateCommand = new Command()
 			}
 
 			if (options.json) {
-				console.log(JSON.stringify(response.data));
+				console.log(JSON.stringify(response.response));
 				return;
 			}
 			if (options.csv) {
 				const keys = ["slug", "name", "location", "ipv4"];
-				const data = response.data.body as unknown as Record<string, unknown>;
+				const data = response.response.body as unknown as Record<string, unknown>;
 				const body = keys.map((key) => {
 					return data[key];
 				});
@@ -58,7 +59,7 @@ export const updateCommand = new Command()
 
 				return;
 			}
-			const data = response.data.body;
+			const data = response.response.body;
 			new Table()
 				.header([
 					"Slug",

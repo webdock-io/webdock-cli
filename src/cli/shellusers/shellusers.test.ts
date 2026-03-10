@@ -6,9 +6,9 @@ const decoder = new TextDecoder();
 let tempServerSlug = "";
 let shellUsersId = 0;
 Deno.test({
-	name: "Test Servers CLI",
+	name: "Test Shell Users CLI",
 	fn: async (t) => {
-		await t.step("[CLI] Create Temp Server", async () => {
+		await t.step("[CLI] Create Temp Server", async (it) => {
 			const creatServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -16,14 +16,15 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					join(Deno.cwd(), "src", "main.ts"),
 					"servers",
 					"create",
 					`temp-${Date.now()}`,
 					"dk",
-					"webdockbit-2024",
+					"wp-business-2026",
 					"-i",
-					"krellide:webdock-noble-lamp",
+					"webdock-ubuntu-jammy-cloud",
 					"--slug",
 					`temp-${Date.now()}`,
 					"--wait",
@@ -34,19 +35,30 @@ Deno.test({
 
 			const output = await creatServer.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
-			expect(stdout).toContain("Slug");
-			expect(stdout).toContain("Name");
-			expect(stdout).toContain("Location");
-			expect(stdout).toContain("IP");
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers create' command failed.${ctx}`).toBe(true);
+			});
+			await it.step("Output contains 'Slug'", () => {
+				expect(stdout, `Expected output to contain 'Slug'.${ctx}`).toContain("Slug");
+			});
+			await it.step("Output contains 'Name'", () => {
+				expect(stdout, `Expected output to contain 'Name'.${ctx}`).toContain("Name");
+			});
+			await it.step("Output contains 'Location'", () => {
+				expect(stdout, `Expected output to contain 'Location'.${ctx}`).toContain("Location");
+			});
+			await it.step("Output contains 'IP'", () => {
+				expect(stdout, `Expected output to contain 'IP'.${ctx}`).toContain("IP");
+			});
 
 			const slugs = extractSlugsFromStdOut(stdout);
-
 			tempServerSlug = slugs[0] ?? "";
 		});
 
-		await t.step("[CLI] Create Shelluser", async () => {
+		await t.step("[CLI] Create Shell User", async (it) => {
 			const createShellUser = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -54,6 +66,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					join(Deno.cwd(), "src", "main.ts"),
 					"shellusers",
 					"create",
@@ -68,17 +81,18 @@ Deno.test({
 
 			const output = await createShellUser.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'shellusers create' on server '${tempServerSlug}' failed.${ctx}`).toBe(true);
+			});
 
 			const ids = extractIdsFromStdOut(stdout);
-
-			console.log("ids", ids);
-
-			shellUsersId = ids[0] ?? "";
+			shellUsersId = ids[0] ?? 0;
 		});
 
-		await t.step("[CLI] Delete Shelluser", async () => {
+		await t.step("[CLI] Delete Shell User", async (it) => {
 			const deleteShellUser = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -86,6 +100,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					join(Deno.cwd(), "src", "main.ts"),
 					"shellusers",
 					"delete",
@@ -99,11 +114,16 @@ Deno.test({
 			});
 
 			const output = await deleteShellUser.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'shellusers delete ${shellUsersId}' on server '${tempServerSlug}' failed.${ctx}`).toBe(true);
+			});
 		});
 
-		await t.step("[CLI] delete Temp Server", async () => {
+		await t.step("[CLI] Delete Temp Server", async (it) => {
 			const deleteServer = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -111,6 +131,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					join(Deno.cwd(), "src", "main.ts"),
 					"servers",
 					"delete",
@@ -122,8 +143,13 @@ Deno.test({
 			});
 
 			const output = await deleteServer.output();
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'servers delete ${tempServerSlug}' command failed.${ctx}`).toBe(true);
+			});
 		});
 	},
 });

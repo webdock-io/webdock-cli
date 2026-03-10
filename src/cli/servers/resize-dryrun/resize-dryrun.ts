@@ -1,7 +1,8 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const resizeDryRunCommand = new Command()
 	.name("resize-dryrun")
@@ -15,12 +16,12 @@ export const resizeDryRunCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] }).action(
 		async (options, serverSlug, profile) => {
-			const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+			const token = await getToken(options.token);
+			const client = new Webdock(token);
 			const response = await client.servers.resizeDryRun(
 				{
 					profileSlug: profile,
 					serverSlug,
-					token: options.token,
 				},
 			);
 
@@ -32,11 +33,11 @@ export const resizeDryRunCommand = new Command()
 			}
 
 			if (options.json) {
-				console.log(JSON.stringify(response.data));
+				console.log(JSON.stringify(response.response));
 				return;
 			}
 
-			const data = response.data;
+			const data = response.response;
 			const rows = [];
 			for (const item of data.body.chargeSummary.items) {
 				const parts = item.text.split(/ - (.*)/s);

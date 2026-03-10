@@ -15,10 +15,7 @@ export default [
 		value: "DELETE",
 		name: `Delete - Permanent removal (irreversible!)`,
 	},
-	{
-		value: "RESIZE",
-		name: `Resize - Upgrade server resources`,
-	},
+
 	{
 		value: "FETCH",
 		name: `Download File - Retrieve a file from the server`,

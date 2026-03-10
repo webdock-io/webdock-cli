@@ -7,13 +7,10 @@ Deno.test({
 
 	fn: async (t) => {
 		const scriptPath = path.join(Deno.cwd(), "src", "main.ts");
-		console.log("scriptPath", scriptPath);
-
 		const decoder = new TextDecoder();
 		let createdHookId: number | null = null;
 
-		// Test valid input
-		await t.step("Valid Input", async () => {
+		await t.step("Valid Input", async (it) => {
 			const createHook = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -21,10 +18,11 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					scriptPath,
 					"hooks",
 					"create",
-					`https://addel.vip?q=${Date.now()}`,
+					`https://httpbin.org/status/200?qs=${Date.now()}`,
 					"--event-type",
 					"provision",
 				],
@@ -34,11 +32,21 @@ Deno.test({
 
 			const output = await createHook.output();
 			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-			expect(output.success).toBe(true);
-			expect(stdout).toContain("ID");
-			expect(stdout).toContain("Callback URL");
-			expect(stdout).toContain("Filters");
+			await it.step("Command exits successfully", () => {
+				expect(output.success, `'hooks create' command failed.${ctx}`).toBe(true);
+			});
+			await it.step("Output contains 'ID'", () => {
+				expect(stdout, `Expected output to contain 'ID'.${ctx}`).toContain("ID");
+			});
+			await it.step("Output contains 'Callback URL'", () => {
+				expect(stdout, `Expected output to contain 'Callback URL'.${ctx}`).toContain("Callback URL");
+			});
+			await it.step("Output contains 'Filters'", () => {
+				expect(stdout, `Expected output to contain 'Filters'.${ctx}`).toContain("Filters");
+			});
 
 			const ids = extractIdsFromStdOut(stdout);
 			if (ids && ids.length > 0) {
@@ -47,8 +55,7 @@ Deno.test({
 			}
 		});
 
-		// Test invalid URL
-		await t.step("Invalid URL", async () => {
+		await t.step("Invalid URL is rejected", async () => {
 			const createHook = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -56,6 +63,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					scriptPath,
 					"hooks",
 					"create",
@@ -66,11 +74,14 @@ Deno.test({
 			});
 
 			const output = await createHook.output();
-			expect(output.success).toBe(false);
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
+
+			expect(output.success, `Expected 'hooks create not-a-url' to fail, but it succeeded.${ctx}`).toBe(false);
 		});
 
-		// Test invalid event type
-		await t.step("Invalid Event Type", async () => {
+		await t.step("Invalid event type is rejected", async () => {
 			const createHook = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -78,6 +89,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					scriptPath,
 					"hooks",
 					"create",
@@ -90,11 +102,14 @@ Deno.test({
 			});
 
 			const output = await createHook.output();
-			expect(output.success).toBe(false);
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
+
+			expect(output.success, `Expected 'hooks create --event-type invalid-event-type' to fail, but it succeeded.${ctx}`).toBe(false);
 		});
 
-		// Test missing required URL
-		await t.step("Missing Required URL", async () => {
+		await t.step("Missing required URL is rejected", async () => {
 			const createHook = new Deno.Command("deno", {
 				args: [
 					"run",
@@ -102,6 +117,7 @@ Deno.test({
 					"--allow-read",
 					"--allow-write",
 					"--allow-net",
+					"--allow-sys",
 					scriptPath,
 					"hooks",
 					"create",
@@ -111,11 +127,15 @@ Deno.test({
 			});
 
 			const output = await createHook.output();
-			expect(output.success).toBe(false);
+			const stdout = decoder.decode(output.stdout);
+			const stderr = decoder.decode(output.stderr);
+			const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
+
+			expect(output.success, `Expected 'hooks create' with no URL to fail, but it succeeded.${ctx}`).toBe(false);
 		});
 
 		if (createdHookId) {
-			await t.step("Cleanup: Delete Created Hook", async () => {
+			await t.step("Cleanup: Delete created hook", async () => {
 				const deleteHook = new Deno.Command("deno", {
 					args: [
 						"run",
@@ -123,6 +143,7 @@ Deno.test({
 						"--allow-read",
 						"--allow-write",
 						"--allow-net",
+					"--allow-sys",
 						scriptPath,
 						"hooks",
 						"delete",
@@ -134,10 +155,11 @@ Deno.test({
 				});
 
 				const output = await deleteHook.output();
+				const stdout = decoder.decode(output.stdout);
+				const stderr = decoder.decode(output.stderr);
+				const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-				console.log(decoder.decode(output.stdout));
-
-				expect(output.success).toBe(true);
+				expect(output.success, `'hooks delete ${createdHookId}' failed.${ctx}`).toBe(true);
 			});
 		}
 	},

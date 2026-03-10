@@ -1,7 +1,7 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
-
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 export const deleteCommand = new Command()
 	.description("Delete a snapshot")
 	.arguments("<serverSlug:string> <snapshotId:number>")
@@ -13,10 +13,11 @@ export const deleteCommand = new Command()
 			serverSlug: string,
 			snapshotId: number,
 		) => {
+			const token = await getToken(options.token);
+			const client = new Webdock(token);
 			const response = await client.snapshots.delete({
 				serverSlug,
 				snapshotId,
-				token: options.token,
 			});
 			if (!response.success) {
 				console.error("Error 404 Server or Snapshot not found!");
@@ -25,15 +26,12 @@ export const deleteCommand = new Command()
 			}
 
 			if (options.wait) {
-				await client.waitForEvent(response.data.headers["x-callback-id"]);
-
-				console.log(
-					colors.bgGreen.underline.bold.italic(
-						`Snapshot ${snapshotId} was successfully deleted to server ${serverSlug}`,
-					),
-				);
-
-				Deno.exit(0);
+				const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+				if (!waitResult.success) {
+					console.error(waitResult.error);
+					Deno.exit(1);
+				}
+ 
 			}
 
 			console.log(

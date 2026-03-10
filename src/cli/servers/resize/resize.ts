@@ -1,18 +1,21 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
+import { FunFact } from "../../fun-fact.ts";
 
 export const resizeCommand = new Command()
 	.description("Resize a server (change profile)")
-	.arguments("<serverSlug:string> <profileSlug:profile>")
+	.arguments("<serverSlug:string> <profileSlug:string>")
 	.option("-t, --token <token:string>", "API token for authentication")
 	.option("--wait", "Wait until the action is complete")
 	.action(async (options, serverSlug: string, profileSlug) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.servers.resize(
 			{
 				profileSlug: String(profileSlug),
 				serverSlug,
-				token: options.token,
 			},
 		);
 		if (!response.success) {
@@ -21,14 +24,14 @@ export const resizeCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
+			
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
 
-			console.log(
-				colors.bgGreen.white.bold(`\n ⚡️ SERVER ACTION: `) +
-					colors.bgWhite.green.bold.italic(` Resized successfully! `) +
-					"\n",
-			);
-			Deno.exit(0);
+ 
 		}
 
 		console.log(

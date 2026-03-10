@@ -1,5 +1,6 @@
-import { client } from "../../../main.ts";
 import { Command } from "@cliffy/command";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const deleteCommand = new Command()
 	.description("Delete an account script")
@@ -9,9 +10,10 @@ export const deleteCommand = new Command()
 		"API token used for authentication (required for secure endpoints)",
 	)
 	.action(async (options, id: number) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.scripts.delete({
 			id,
-			token: options.token,
 		});
 
 		if (!response.success) {

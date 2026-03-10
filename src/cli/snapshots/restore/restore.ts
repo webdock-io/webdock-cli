@@ -1,17 +1,18 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
-
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 export const restoreCommand = new Command()
 	.description("Restore a server from a snapshot")
 	.arguments("<serverSlug:string> <snapshotId:number>")
 	.option("-t, --token <token:string>", "API token for authentication")
 	.option("--wait", "Wait until the operation is finished")
 	.action(async (options, serverSlug, snapshotId) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.snapshots.restore({
 			serverSlug,
 			snapshotId,
-			token: options.token,
 		});
 		if (!response.success) {
 			if (response.code == 404) {
@@ -22,15 +23,12 @@ export const restoreCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
-
-			console.log(
-				colors.bgGreen.underline.bold.italic(
-					`Snapshot ${snapshotId} was successfully applied to server ${serverSlug}`,
-				),
-			);
-
-			Deno.exit(0);
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
+	 
 		}
 
 		console.log(

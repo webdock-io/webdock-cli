@@ -1,7 +1,8 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
-
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
+ 
 export const serverScriptsExecuteCommand = new Command()
 	.description("Execute a script on a server")
 	.arguments("<serverSlug:string> <scriptId:number>")
@@ -14,10 +15,11 @@ export const serverScriptsExecuteCommand = new Command()
 		"Wait until the operation has completed before exiting",
 	)
 	.action(async (options, serverSlug: string, scriptID: number) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.scripts.executeOnServer({
 			scriptID,
 			serverSlug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -26,10 +28,13 @@ export const serverScriptsExecuteCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
-			console.log(colors.bgGreen("script Executed successfully"));
-
-			Deno.exit(0);
+			
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
+		 
 		}
 		console.log(colors.bgGreen("script Execution initiated!"));
 

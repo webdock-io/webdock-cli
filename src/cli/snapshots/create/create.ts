@@ -1,9 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-
 import { wrapId } from "../../../test_utils.ts";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const createCommand = new Command()
 	.description("Create a snapshot for a server")
@@ -17,11 +17,11 @@ export const createCommand = new Command()
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.option("--wait", "Wait until the operation has finished")
 	.action(async (options, serverSlug, username) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.snapshots.create({
 			name: username,
 			serverSlug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -31,11 +31,18 @@ export const createCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			console.log("waitResult", waitResult);
+			
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
+ 
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
@@ -49,7 +56,7 @@ export const createCommand = new Command()
 				"completed",
 				"deletable",
 			] as const;
-			const data = response.data.body as unknown as Record<string, unknown>;
+			const data = response.response.body as unknown as Record<string, unknown>;
 			const body = keys.map((key) => data[key]);
 			console.log(stringify([body], {
 				columns: keys,
@@ -59,7 +66,7 @@ export const createCommand = new Command()
 			return;
 		}
 
-		const data = response.data;
+		const data = response.response;
 
 		new Table()
 			.header([

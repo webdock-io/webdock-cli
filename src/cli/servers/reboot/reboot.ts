@@ -1,7 +1,8 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
-
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
+ 
 export const rebootCommand = new Command()
 	.description("Start a server")
 	.arguments("<serverSlug:string>")
@@ -10,8 +11,9 @@ export const rebootCommand = new Command()
 		"--wait",
 		"Wait until the server is fully up and running before exiting",
 	).action(async (options, serverSlug) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.servers.reboot({
-			token: options.token,
 			serverSlug,
 		});
 
@@ -21,14 +23,13 @@ export const rebootCommand = new Command()
 		}
 
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
-			console.log(
-				colors.bgGreen.bold.underline.italic(
-					"Your server has been successfully rebooted!",
-				),
-			);
-
-			return true;
+			
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
+ 
 		}
 
 		console.log(

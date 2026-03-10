@@ -1,9 +1,10 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { colors } from "@cliffy/ansi/colors";
 import { stringify } from "csv-stringify/sync";
 import { eventTypeEnum } from "../../event-types.ts";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.description("List all events")
@@ -33,15 +34,16 @@ export const listCommand = new Command()
 		"Filter events by type",
 	)
 	.action(async (options) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
-		const response = await client.events.list(options);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
+		const response = await client.events.list({ page: options.page, limit: options.limit, type: options.type });
 
 		if (!response.success) {
 			console.error(colors.bgRed(response.error));
 			Deno.exit(1);
 		}
 		if (options.csv) {
-			if (response.data.body.length === 0) Deno.exit(0);
+			if (response.response.body.length === 0) Deno.exit(0);
 			const keys = [
 				"id",
 				"startTime",
@@ -55,7 +57,7 @@ export const listCommand = new Command()
 				"message",
 			];
 
-			const data = response.data.body.map((item) => {
+			const data = response.response.body.map((item) => {
 				// @ts-expect-error:
 				return keys.map((key) => item?.[key]);
 			});
@@ -68,14 +70,14 @@ export const listCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
 		const table = new Table()
 			.header(["ID", "Slug", "Type", "StartTime", "End time", "Details"])
 			.body(
-				response.data.body.map((event) => [
+				response.response.body.map((event) => [
 					event.id,
 					event.serverSlug,
 					event.eventType.toString(),

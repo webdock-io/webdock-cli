@@ -1,7 +1,8 @@
-import { client } from "../../../main.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
 import { Confirm } from "@cliffy/prompt";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const deleteCommand = new Command()
 	.name("delete")
@@ -24,10 +25,11 @@ export const deleteCommand = new Command()
 			}
 		}
 
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.shellUsers.delete({
 			serverSlug,
 			userId,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -35,14 +37,12 @@ export const deleteCommand = new Command()
 			Deno.exit(1);
 		}
 		if (options.wait) {
-			await client.waitForEvent(response.data.headers["x-callback-id"]);
-
-			console.log(
-				colors.bgGreen.underline.bold.italic(
-					`Shell user with ID ${userId} deleted successfully.`,
-				),
-			);
-			Deno.exit(0);
+			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			if (!waitResult.success) {
+				console.error(waitResult.error);
+				Deno.exit(1);
+			}
+ 
 		}
 
 		console.log(

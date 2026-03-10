@@ -14,6 +14,7 @@ Deno.test({
 				"--allow-read",
 				"--allow-write",
 				"--allow-net",
+					"--allow-sys",
 				scriptPath,
 				"images",
 				"list",
@@ -24,19 +25,23 @@ Deno.test({
 
 		const output = await imagesList.output();
 		const stdout = decoder.decode(output.stdout);
+		const stderr = decoder.decode(output.stderr);
+		const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;
 
-		expect(output.success).toBe(true);
-		await t.step("To Contain Slug", () => {
-			expect(stdout).toContain("Slug");
+		await t.step("Command exits successfully", () => {
+			expect(output.success, `'images list' command failed.${ctx}`).toBe(true);
 		});
-		await t.step("To Contain Name", () => {
-			expect(stdout).toContain("Name");
+		await t.step("Output contains 'Slug'", () => {
+			expect(stdout, `Expected output to contain 'Slug'.${ctx}`).toContain("Slug");
 		});
-		await t.step("To Contain Type", () => {
-			expect(stdout).toContain("Type");
+		await t.step("Output contains 'Name'", () => {
+			expect(stdout, `Expected output to contain 'Name'.${ctx}`).toContain("Name");
 		});
-		await t.step("To Contain PHP Version", () => {
-			expect(stdout).toContain("phpVersion");
+		await t.step("Output contains 'Type'", () => {
+			expect(stdout, `Expected output to contain 'Type'.${ctx}`).toContain("Type");
+		});
+		await t.step("Output contains 'phpVersion'", () => {
+			expect(stdout, `Expected output to contain 'phpVersion'.${ctx}`).toContain("phpVersion");
 		});
 	},
 });

@@ -1,6 +1,7 @@
-import { client } from "../../../main.ts";
 import { Command } from "@cliffy/command";
 import { Confirm } from "@cliffy/prompt";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const deleteCommand = new Command()
 	.name("delete")
@@ -27,9 +28,10 @@ export const deleteCommand = new Command()
 			}
 		}
 
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.hooks.deleteById({
 			id,
-			token: options.token,
 		});
 		console.log(response);
 

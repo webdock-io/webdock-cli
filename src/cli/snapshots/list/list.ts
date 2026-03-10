@@ -2,7 +2,8 @@ import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
 import { wrapId } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const listCommand = new Command()
 	.description("List all snapshots for a server")
@@ -18,10 +19,10 @@ export const listCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, serverSlug) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.snapshots.list({
 			serverSlug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -30,7 +31,7 @@ export const listCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			Deno.exit(0);
 		}
 		if (options.csv) {
@@ -43,7 +44,7 @@ export const listCommand = new Command()
 				"completed",
 				"deletable",
 			] as const;
-			const data = response.data.body as unknown as Record<string, unknown>[];
+			const data = response.response.body as unknown as Record<string, unknown>[];
 			const body = data.map((item) => {
 				return keys.map((key) => item[key] || "N/A");
 			});
@@ -65,7 +66,7 @@ export const listCommand = new Command()
 				"Deletable",
 			])
 			.body(
-				response.data.body.map((snapshot) => [
+				response.response.body.map((snapshot) => [
 					wrapId(snapshot.id),
 					snapshot.name,
 					snapshot.date,

@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-net --allow-run
+#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-sys --allow-net --allow-run
 
 const platforms = [
 	{ target: "x86_64-pc-windows-msvc", suffix: "-windows.exe", folder: "" },

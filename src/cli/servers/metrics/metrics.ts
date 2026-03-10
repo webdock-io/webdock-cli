@@ -1,6 +1,7 @@
-import { client } from "../../../main.ts";
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
+import { Webdock } from "@webdock/sdk";
+import { getToken } from "../../../config.ts";
 
 export const metricsCommand = new Command()
 	.name("metrics-now")
@@ -15,9 +16,10 @@ export const metricsCommand = new Command()
 		"API token for authentication",
 	)
 	.action(async (options, serverSlug) => {
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.servers.metrics({
 			now: !!options.now,
-			token: options.token,
 			serverSlug,
 		});
 
@@ -26,7 +28,7 @@ export const metricsCommand = new Command()
 			Deno.exit(1);
 		}
 
-		const body = response.data.body;
+		const body = response.response.body;
 		const isNow = options.now;
 
 		// Extract Disk metrics

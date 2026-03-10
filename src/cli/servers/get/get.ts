@@ -1,9 +1,9 @@
 import { Command } from "@cliffy/command";
 import { Table } from "@cliffy/table";
-
-import { Webdock } from "../../../webdock/webdock.ts";
+import { Webdock } from "@webdock/sdk";
 import { wrapSlug } from "../../../test_utils.ts";
 import { stringify } from "csv-stringify/sync";
+import { getToken } from "../../../config.ts";
 
 export const getCommand = new Command()
 	.name("get")
@@ -20,10 +20,10 @@ export const getCommand = new Command()
 	)
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, slug) => {
-		const client = new Webdock(!options.csv && !options.json, !options.csv && !options.json);
+		const token = await getToken(options.token);
+		const client = new Webdock(token);
 		const response = await client.servers.getBySlug({
 			serverSlang: slug,
-			token: options.token,
 		});
 
 		if (!response.success) {
@@ -31,13 +31,13 @@ export const getCommand = new Command()
 		}
 
 		if (options.json) {
-			console.log(JSON.stringify(response.data));
+			console.log(JSON.stringify(response.response));
 			return;
 		}
 
 		if (options.csv) {
 			const keys = ["slug", "name", "location", "status", "ipv4"];
-			const data = response.data.body as unknown as Record<string, unknown>;
+			const data = response.response.body as unknown as Record<string, unknown>;
 			const body = keys.map((key) => data[key]);
 			console.log(stringify([body], {
 				columns: keys,
@@ -50,11 +50,11 @@ export const getCommand = new Command()
 			.header(["Slug", "Name", "Location", "Status", "IP"])
 			.body([
 				[
-					wrapSlug(response.data.body.slug),
-					response.data.body.name,
-					response.data.body.location,
-					response.data.body.status,
-					response.data.body.ipv4 ?? "",
+					wrapSlug(response.response.body.slug),
+					response.response.body.name,
+					response.response.body.location,
+					response.response.body.status,
+					response.response.body.ipv4 ?? "",
 				],
 			])
 			.border(true).render();
