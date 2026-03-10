@@ -41,6 +41,8 @@ async function build() {
 				"--allow-env",
 				"--allow-run",
 				"--no-check",
+				"--allow-sys",
+
 				"--target",
 				platform.target,
 				"--output",
