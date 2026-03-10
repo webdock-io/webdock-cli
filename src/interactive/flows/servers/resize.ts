@@ -8,6 +8,7 @@ import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "../../navigator.ts";
 import { open } from "@opensrc/deno-open";
 
+const MiB_TO_GiB = 0.001048576;
 
 export async function resizeServerAction(slug: string) {
 	const token = await getToken();
@@ -34,12 +35,18 @@ export async function resizeServerAction(slug: string) {
 		console.error(possibleProfiles.error);
 		Deno.exit(1);
 	}
+	const profiles = await client.profiles.list({ locationId: "dk" });
+	if (!profiles.success) {
+		console.error(profiles.error);
+		Deno.exit(1);
+	}
+	profiles.response.body = profiles.response.body.sort((a, b) => a.cpu.threads - b.cpu.threads);
 
-
+	const longestName = Math.max(...profiles.response.body.map((p) => p.name.length));
 
 
 	const filterd = possibleProfiles.response.body.map((p) => ({
-		name: `${p.name.padEnd(10 + 2)} | ${p.cpu.cores}C/${p.cpu.threads}vCPU | ${(p.ram / 1024).toFixed(1)}GB RAM | ${(p.disk / 1024).toFixed(1)}GB Disk`,
+		name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${(p.disk * MiB_TO_GiB).toFixed(0)}GB SSD`,
 		value: p.slug,
 	})).filter((p) => p.value !== serverInfo.response.body.profile);
 
