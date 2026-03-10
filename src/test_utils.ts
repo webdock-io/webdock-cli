@@ -1,9 +1,9 @@
-export const isTesting = true;
+export const isTesting = false;
 
 export function extractIdsFromStdOut(stdout: string) {
 	const ids = [...stdout.matchAll(/<id>(\d+)<\/id>/g)]
 		.map((match) => parseInt(match[1], 10)).filter((value) => !isNaN(value));
- 	return ids;
+	return ids;
 }
 
 export function extractSlugsFromStdOut(stdout: string) {
