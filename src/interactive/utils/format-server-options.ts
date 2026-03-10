@@ -1,7 +1,8 @@
 import { colors } from "@cliffy/ansi/colors";
-import { Server } from "../../webdock/sub/servers.ts";
 
-export function formatServerOption(server: Server, index: number) {
+type ServerEntry = { status: string; name: string; slug: string; ipv4: string | null; location: string; profile: string; date: string };
+
+export function formatServerOption(server: ServerEntry, index: number) {
 	const {
 		status,
 		name,

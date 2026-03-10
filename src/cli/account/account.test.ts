@@ -14,6 +14,7 @@ Deno.test({
 				"--allow-read",
 				"--allow-write",
 				"--allow-net",
+					"--allow-sys",
 				"--allow-run",
 				scriptPath,
 				"account",
@@ -24,6 +25,7 @@ Deno.test({
 		});
 
 		const output = await accountInfo.output();
+
 		const stdout = decoder.decode(output.stdout);
 		const stderr = decoder.decode(output.stderr);
 		const ctx = `\nstdout:\n${stdout || "(empty)"}\nstderr:\n${stderr || "(empty)"}`;

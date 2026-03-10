@@ -2,7 +2,6 @@
 
 
 import { Command } from "@cliffy/command";
-import { Webdock } from "./webdock/webdock.ts";
 import { accountCommand } from "./cli/account/mod.ts";
 import { eventsCommand } from "./cli/events/mod.ts";
 import { hooksCommand } from "./cli/hooks/mod.ts";
@@ -19,13 +18,12 @@ import { main } from "./interactive/index.ts";
 import { eventTypeEnum } from "./cli/event-types.ts";
 import { updateCommand } from "./cli/update.ts";
 
-export const client = new Webdock(true);
 
 export const cli = new Command()
   .name("webdock")
-  .version("v1.0.0")
+  .version("v1.0.1")
   .globalType("event-type", eventTypeEnum)
- 
+
   .description("Webdock CLI - A command-line interface for the Webdock API")
   .default("it")
   .command(

@@ -13,8 +13,10 @@
     "jsr:@cliffy/table@1.0.0-rc.8": "1.0.0-rc.8",
     "jsr:@cliffy/table@^1.0.0-rc.8": "1.0.0-rc.8",
     "jsr:@luxass/zod-error-utils@0.3": "0.3.0",
+    "jsr:@opensrc/deno-open@1": "1.0.0",
     "jsr:@std/assert@^1.0.11": "1.0.13",
     "jsr:@std/assert@^1.0.13": "1.0.13",
+    "jsr:@std/assert@~0.218.2": "0.218.2",
     "jsr:@std/assert@~1.0.6": "1.0.13",
     "jsr:@std/async@^1.0.13": "1.0.14",
     "jsr:@std/bytes@^1.0.5": "1.0.6",
@@ -34,12 +36,13 @@
     "jsr:@std/path@^1.0.8": "1.0.9",
     "jsr:@std/path@^1.0.9": "1.1.1",
     "jsr:@std/path@^1.1.1": "1.1.1",
+    "jsr:@std/path@~0.218.2": "0.218.2",
     "jsr:@std/path@~1.0.6": "1.0.9",
     "jsr:@std/semver@^1.0.5": "1.0.5",
     "jsr:@std/testing@^1.0.10": "1.0.15",
     "jsr:@std/text@~1.0.7": "1.0.15",
     "npm:@types/node@*": "22.12.0",
-    "npm:@webdock/sdk@^1.0.5962": "1.0.5962",
+    "npm:@webdock/sdk@^1.0.5964": "1.0.5964",
     "npm:axios@*": "1.13.5",
     "npm:axios@^1.9.0": "1.13.5",
     "npm:csv-stringify@*": "6.5.2",
@@ -114,6 +117,15 @@
         "npm:zod@^3.24.1"
       ]
     },
+    "@opensrc/deno-open@1.0.0": {
+      "integrity": "590decada8cf2d50f4b35c7d3a8d642e18e45d6e47078ea02a4dbf0096bbf9fd",
+      "dependencies": [
+        "jsr:@std/path@~0.218.2"
+      ]
+    },
+    "@std/assert@0.218.2": {
+      "integrity": "7f0a5a1a8cf86607cd6c2c030584096e1ffad27fc9271429a8cb48cfbdee5eaf"
+    },
     "@std/assert@1.0.13": {
       "integrity": "ae0d31e41919b12c656c742b22522c32fb26ed0cba32975cb0de2a273cb68b29",
       "dependencies": [
@@ -172,6 +184,12 @@
         "jsr:@std/bytes"
       ]
     },
+    "@std/path@0.218.2": {
+      "integrity": "b568fd923d9e53ad76d17c513e7310bda8e755a3e825e6289a0ce536404e2662",
+      "dependencies": [
+        "jsr:@std/assert@~0.218.2"
+      ]
+    },
     "@std/path@1.0.9": {
       "integrity": "260a49f11edd3db93dd38350bf9cd1b4d1366afa98e81b86167b4e3dd750129e"
     },
@@ -206,8 +224,8 @@
         "undici-types"
       ]
     },
-    "@webdock/sdk@1.0.5962": {
-      "integrity": "sha512-M3IUuNY2+2ddXCKSY/MX24UarQrG+af8YtFL2RIiJxFIXBrnQ8a2B+QHqTdCV0+Pr0/m7wyBK5RqJJhxs/FW8w==",
+    "@webdock/sdk@1.0.5964": {
+      "integrity": "sha512-yg8d5oFtq+U8nnJDYq7qiDj9nw7h3ARnavCVKuKtWOoyDdbZOgmIKYdJ3Ot3I5x1WC+7GpL5IYVh7T/kSQAInQ==",
       "dependencies": [
         "axios",
         "dotenv",
@@ -433,13 +451,14 @@
       "jsr:@cliffy/prompt@^1.0.0-rc.8",
       "jsr:@cliffy/table@^1.0.0-rc.8",
       "jsr:@luxass/zod-error-utils@0.3",
+      "jsr:@opensrc/deno-open@1",
       "jsr:@std/assert@^1.0.11",
       "jsr:@std/cli@^1.0.16",
       "jsr:@std/io@~0.225.2",
       "jsr:@std/path@^1.0.9",
       "jsr:@std/semver@^1.0.5",
       "jsr:@std/testing@^1.0.10",
-      "npm:@webdock/sdk@^1.0.5962",
+      "npm:@webdock/sdk@^1.0.5964",
       "npm:axios@^1.9.0",
       "npm:csv-stringify@^6.5.2",
       "npm:csv@^6.3.11",

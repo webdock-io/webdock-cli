@@ -188,6 +188,7 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
   - `-s, --slug <slug>`: Custom slug
   - `-a, --snapshotId <snapshotId>`: Restore from snapshot
   - `--wait`: Wait for server to be ready
+  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
   - `--json`, `--csv`
 - `delete <serverSlug>`: Delete a server
   - `-t, --token <token>`: API token
@@ -206,6 +207,7 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
   - `--wait`: Wait for server to reboot
 - `reinstall <serverSlug> <imageSlug>`: Reinstall a server
   - `-t, --token <token>`: API token
+  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
   - `--wait`: Wait for reinstall
 - `resize <serverSlug> <profileSlug>`: Resize a server (change profile)
   - `-t, --token <token>`: API token

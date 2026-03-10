@@ -14,6 +14,7 @@ Deno.test({
 				"--allow-read",
 				"--allow-write",
 				"--allow-net",
+					"--allow-sys",
 				scriptPath,
 				"events",
 				"list",
