@@ -1,9 +1,10 @@
-import { Confirm, Input } from "@cliffy/prompt";
+import { Confirm, Input, Select } from "@cliffy/prompt";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
 import { multiLineInput } from "../../utils/multiline.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "../../navigator.ts";
+import { PathPicker } from "../../utils/path-picker.ts";
 
 export async function createScript() {
 	console.log("🚀 Starting script creation process...\n");
@@ -20,12 +21,25 @@ export async function createScript() {
 		validate: (val) => val.length >= 5 || "Filename must be at least 5 characters",
 	});
 
-	const content = await multiLineInput();
-	if (!content) {
-		console.log(
-			`❌${colors.bgRed(`Empty content detected. Canceling the operation.`)}`,
-		);
-		return navigator.goToScriptsList();
+	let script = ""
+	const keyPathPickMethod = await Select.prompt({
+		message: "How would you like to provide your key?",
+		options: [
+			{
+				name: "Select a file from your drive",
+				value: "PICK"
+			},
+			{
+				name: "Enter the script manually",
+				value: "WRITE"
+			}
+		]
+	})
+	if (keyPathPickMethod == "PICK") {
+		const path = await new PathPicker().pickFile()
+		script = await Deno.readTextFile(path);
+	} else {
+		script = await multiLineInput();
 	}
 
 	const confirmed = await Confirm.prompt({
@@ -40,8 +54,8 @@ export async function createScript() {
 
 	console.log("\n🔄 Submitting script to Webdock API...");
 
-	const response = await client.scripts.create(
-		{ name, filename, content },
+	const response = await client.account.scripts.create(
+		{ name, filename, content: script },
 	);
 
 	if (!response.success) {

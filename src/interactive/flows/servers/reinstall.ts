@@ -5,6 +5,8 @@ import { FunFact } from "../../../cli/fun-fact.ts";
 import { Spinner } from "@std/cli/unstable-spinner";
 import { goBackOption, isGoBack } from "../../utils/navigation.ts";
 import { navigator } from "../../navigator.ts";
+import { Confirm } from "@cliffy/prompt";
+import { colors } from "@cliffy/ansi/colors";
 
 export async function reinstall(slug: string) {
 	const spinner = new Spinner();
@@ -27,12 +29,49 @@ export async function reinstall(slug: string) {
 
 	if (isGoBack(image)) return navigator.goToServerActions(slug);
 
-	const confirm = await Select.prompt({
-		message: "Confirm server creation:",
+
+
+	const shouldRunScript = await Select.prompt({
+		message: "Would you like to run a SCRIPT as part of the provisioning?",
 		options: [
-			{ name: "✅ Yes, Reinstall server", value: true },
-			{ name: "❌ Cancel creation", value: false },
-		],
+			{
+				name: "No, use the default settings",
+				value: "NO",
+			},
+
+			{
+				name: "Yes, run an account script",
+				value: "ACCOUNT",
+			}
+		]
+	})
+
+	let userScriptId = 0
+	if (shouldRunScript === "ACCOUNT") {
+		const accountScripts = await client.account.scripts.list()
+		if (!accountScripts.success) {
+			console.error(colors.red(accountScripts.error))
+			return
+		}
+
+		const selectedScript = await Select.prompt({
+			message: "Choose script to run after provisiong",
+			options: accountScripts.response.body
+				.map((script, idx) => {
+					return {
+						name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
+						value: script.id
+					}
+				})
+		})
+		userScriptId = selectedScript
+	}
+
+
+
+	const confirm = await Confirm.prompt({
+		message: "Confirm server reinstalation:",
+
 	});
 
 	if (!confirm) {

@@ -8,7 +8,7 @@ export async function keyActionsScreen(id: number) {
 		options: [
 			{
 				value: "DELETE",
-				name: "❌Delete Key",
+				name: `❌ Delete Key (#${id})`,
 			},
 		].concat(goBackOption),
 	});

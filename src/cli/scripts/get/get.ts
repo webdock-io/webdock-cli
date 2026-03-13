@@ -20,7 +20,7 @@ export const getCommand = new Command()
 	.action(async (options, id: number) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
-		const response = await client.scripts.getById({
+		const response = await client.account.scripts.getById({
 			scriptId: id,
 		});
 

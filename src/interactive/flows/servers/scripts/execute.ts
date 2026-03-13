@@ -23,7 +23,7 @@ export async function executeScriptOnServer(
 	const spinner = new Spinner();
 	spinner.message = "Initiating server execution";
 	spinner.start();
-	const response = await client.scripts.executeOnServer({
+	const response = await client.servers.scripts.execute({
 		scriptID: scriptID,
 		serverSlug: serverSlug,
 	});

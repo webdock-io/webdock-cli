@@ -7,7 +7,7 @@ import { navigator } from "../../../navigator.ts";
 export async function serverScriptsActionsScreen(serverSlug: string) {
 	const token = await getToken();
 	const client = new Webdock(token);
-	const response = await client.scripts.listOnServer({
+	const response = await client.servers.scripts.listOnServer({
 		serverSlug: serverSlug,
 	});
 

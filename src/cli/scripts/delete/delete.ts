@@ -12,7 +12,7 @@ export const deleteCommand = new Command()
 	.action(async (options, id: number) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
-		const response = await client.scripts.delete({
+		const response = await client.account.scripts.delete({
 			id,
 		});
 

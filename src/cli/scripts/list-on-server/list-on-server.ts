@@ -21,7 +21,7 @@ export const serverScriptsListCommand = new Command()
 	.action(async (options, serverSlug: string) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
-		const response = await client.scripts.listOnServer({
+		const response = await client.servers.scripts.listOnServer({
 			serverSlug: serverSlug,
 		});
 

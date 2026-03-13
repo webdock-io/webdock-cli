@@ -1,10 +1,15 @@
-import { Input } from "@cliffy/prompt";
+import { Confirm, Input } from "@cliffy/prompt";
 import { Webdock } from "@webdock/sdk";
-import { getToken } from "../../../config.ts";
+import { getConfigDir, getToken } from "../../../config.ts";
 import { FunFact } from "../../../cli/fun-fact.ts";
 import { Spinner } from "@std/cli/unstable-spinner";
 import { sanitizePath } from "../../../utils/sanitize-path.ts";
 import { navigator } from "../../navigator.ts";
+import { dirname, join } from "node:path";
+import { Buffer } from "node:buffer";
+import { decodeBase64 } from "jsr:@std/encoding@~1.0.5/base64";
+import { PathPicker } from "../../utils/path-picker.ts";
+
 
 export async function fetchFile(slug: string) {
 	const token = await getToken();
@@ -20,36 +25,47 @@ export async function fetchFile(slug: string) {
 	const sanitizedPath = await sanitizePath(path);
 	if (!sanitizedPath) return;
 
-	spinner.message = "🔍 Searching for file...";
+
+	await new FunFact().show();
+	spinner.message = "⏳ Waiting for operation to complete...";
 	spinner.start();
 
-	const response = await client.servers.fetchFileAsync({
+
+	const response = await client.servers.fetchFile({
 		path: sanitizedPath,
 		slug: slug,
 	});
 	spinner.stop();
 
 	if (!response.success) {
-		switch (response.code) {
-			case 400:
-				console.error("❌ Invalid request:", response.error);
-				break;
-			case 404:
-				console.error("❌ Server or file not found");
-				break;
-			default:
-				console.error("❌ File retrieval failed:", response.error);
-		}
+		console.error("\n❌ Failed to retrieve file:", response.message);
 		return navigator.goToMain();
 	}
 
-	await new FunFact().show();
-	spinner.message = "⏳ Waiting for operation to complete...";
-	spinner.start();
-	const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
-	spinner.stop();
-	if (!waitResult.success) return navigator.goToMain();
 
+	const DirPath = await new PathPicker().pickDir()
+	Deno.mkdir(dirname(DirPath), { recursive: true });
+
+	let fileName: string;
+	while (true) {
+		fileName = await Input.prompt({
+			message: "💾 Enter a name for the downloaded file:",
+			minLength: 1,
+		})
+		const filePath = join(DirPath, fileName);
+
+		if (await Deno.stat(filePath).then(() => true).catch(() => false)) {
+			const overwrite = await Confirm.prompt("⚠️ File already exists. Do you want to overwrite it?");
+			if (!overwrite) continue;
+		}
+		break
+	}
+	const filePath = join(DirPath, fileName);
+
+	await Deno.writeFile(filePath, decodeBase64(response.content || ""));
+
+	console.log(`\n📁 File saved to: ${filePath}`);
 	console.log("\n✅ File successfully retrieved!");
 	return navigator.goToServerActions(slug);
 }
+

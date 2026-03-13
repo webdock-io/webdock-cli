@@ -10,7 +10,7 @@ export async function updateScript(id: number) {
 	console.log("🚀 Starting script update process...\n");
 	const token = await getToken();
 	const client = new Webdock(token);
-	const script = await client.scripts.getById({ scriptId: id });
+	const script = await client.account.scripts.getById({ scriptId: id });
 	if (!script.success) {
 		return navigator.goToScriptsList();
 	}
@@ -58,7 +58,7 @@ export async function updateScript(id: number) {
 
 	console.log("\n🔄 Submitting update to Webdock...");
 
-	const response = await client.scripts.update({
+	const response = await client.account.scripts.update({
 		id,
 		name,
 		filename,

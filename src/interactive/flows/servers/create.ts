@@ -1,5 +1,4 @@
 import { Input } from "@cliffy/prompt/input";
-import { Select } from "@cliffy/prompt/select";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
 import { FunFact } from "../../../cli/fun-fact.ts";
@@ -8,6 +7,7 @@ import { goBackOption, isGoBack } from "../../utils/navigation.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { getServerOptions } from "../../screens/servers/list.ts";
 import { navigator } from "../../navigator.ts";
+import { Confirm, Select } from "@cliffy/prompt";
 const MiB_TO_GiB = 0.001048576;
 export async function createWebdockServer() {
 	const spinner = new Spinner();
@@ -38,6 +38,7 @@ export async function createWebdockServer() {
 			}))
 
 			.concat(goBackOption),
+
 	});
 	if (isGoBack(profile)) {
 		return navigator.goToMain();
@@ -135,12 +136,46 @@ export async function createWebdockServer() {
 		if (isGoBack(String(snapshotChoice))) return navigator.goToMain();
 	}
 
-	const confirm = await Select.prompt({
-		message: "Confirm server creation:",
+	const shouldRunScript = await Select.prompt({
+		message: "Would you like to run a SCRIPT as part of the provisioning?",
 		options: [
-			{ name: "✅ Yes, create server", value: true },
-			{ name: "❌ Cancel creation", value: false },
-		],
+			{
+				name: "No, use the default settings",
+				value: "NO",
+			},
+
+			{
+				name: "Yes, run an account script",
+				value: "ACCOUNT",
+			}
+		]
+	})
+
+	let userScriptId = 0
+	if (shouldRunScript === "ACCOUNT") {
+		const accountScripts = await client.account.scripts.list()
+		if (!accountScripts.success) {
+			console.error(colors.red(accountScripts.error))
+			return
+		}
+
+		const selectedScript = await Select.prompt({
+			message: "Choose script to run after provisiong",
+			options: accountScripts.response.body
+				.map((script, idx) => {
+					return {
+						name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
+						value: script.id
+					}
+				})
+		})
+		userScriptId = selectedScript
+	}
+
+
+	const confirm = await Confirm.prompt({
+		message: "Confirm server creation:",
+
 	});
 
 	if (!confirm) {
@@ -155,6 +190,8 @@ export async function createWebdockServer() {
 		locationId: "dk",
 		profileSlug: profile,
 		...(imageType === "new" ? { imageSlug } : { snapshotId: snapshotChoice }),
+		...(userScriptId === 0 ? { userScriptId } : {}),
+
 	});
 	spinner.stop();
 

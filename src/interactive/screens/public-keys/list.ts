@@ -40,7 +40,7 @@ export async function keysListScreen() {
 		options: response.response.body
 			.map((key) => {
 				return {
-					name: key.name,
+					name: `${key.name} (#${key.id})`,
 					value: key.id,
 				};
 			})

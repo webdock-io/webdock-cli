@@ -15,31 +15,49 @@ export async function createServerScript(slug: string) {
 	const spinner = new Spinner();
 	spinner.message = "Loading available scripts...";
 	spinner.start();
-	const response = await client.scripts.list();
+	// const response = await client.webdock.listScripts()
+	// if (!response.success) {
+	// 	console.error(
+	// 		"\n❌ Failed to load scripts:",
+	// 		response.error || "Unknown error",
+	// 	);
+	// 	return navigator.goToServerScripts(slug);
+	// }
+	const accountScripts = await client.account.scripts.list()
 	spinner.stop();
 
-	if (!response.success) {
+	if (!accountScripts.success) {
 		console.error(
 			"\n❌ Failed to load scripts:",
-			response.error || "Unknown error",
+			accountScripts.error || "Unknown error",
 		);
 		return navigator.goToServerScripts(slug);
 	}
 
-	if (response.response.body.length === 0) {
+
+
+	if (accountScripts.response.body.length === 0) {
 		console.log("\n📭 No scripts available. Create one first!");
 		return navigator.goToServerScripts(slug);
 	}
 
-	const scriptId = await Select.prompt({
+	const script = await Select.prompt<typeof accountScripts.response.body[0]>({
 		message: "Select a script to deploy:",
-		options: response.response.body.map((script) => ({
-			value: script.id,
-			name: `📜 ${script.name} (ID: ${script.id})`,
-		})),
+		options: [
+
+			// ...(accountScripts.response.body.length != 0 ? [Select.separator("----- Account Scripts -----")] : []),
+			...accountScripts.response.body.map((script) => ({
+				value: script,
+				name: `📜 ${script.name} (ID: ${script.id})`,
+			})),
+			// Select.separator("----- Webdock offical Scripts -----"),
+			// ...response.response.body.map((script) => ({
+			// 	value: script,
+			// 	name: `📜 ${script.name} (ID: ${script.id})`,
+			// })),
+		],
 	});
 
-	const selectedScript = response.response.body.find((s) => s.id === scriptId)!;
 
 	const path = await Input.prompt({
 		message: "Enter deployment path:",
@@ -76,7 +94,7 @@ export async function createServerScript(slug: string) {
 		.header(["Setting", "Value"])
 		.body([
 			["Server", slug],
-			["Script", `${selectedScript.name} (ID: ${scriptId})`],
+			["Script", `${script.name} (ID: ${script.id})`],
 			["Path", path],
 			["Executable", executable ? "✅ Yes" : "❌ No"],
 			["Immediate Execution", executeImmediately ? "⚠️  Yes" : "❌ No"],
@@ -96,8 +114,8 @@ export async function createServerScript(slug: string) {
 	spinner.message = "🚚 Deploying script...";
 	spinner.start();
 
-	const create = await client.scripts.createOnServer({
-		scriptId,
+	const create = await client.servers.scripts.create({
+		scriptId: script.id,
 		path,
 		makeScriptExecutable: executable,
 		executeImmediately,
@@ -110,7 +128,7 @@ export async function createServerScript(slug: string) {
 		if (create.code === 404) {
 			console.error(
 				"💡 Verify:",
-				`- Server slug '${slug}' exists\n` + `- Script ID ${scriptId} is valid`,
+				`- Server slug '${slug}' exists\n` + `- Script ID ${script.id} is valid`,
 			);
 		}
 		return navigator.goToServerScripts(slug);
@@ -124,4 +142,6 @@ export async function createServerScript(slug: string) {
 		console.log("\n⚡ Script execution started - check server logs for output");
 	}
 	return navigator.goToServerScripts(slug);
+
+
 }

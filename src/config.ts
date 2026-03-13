@@ -1,10 +1,15 @@
-export function getConfigPath(): string {
+import { join } from "@std/path";
+import { dirname } from "@std/path";
+
+export function getConfigDir(): string {
 	const homeDir = Deno.env.get("HOME") || Deno.env.get("USERPROFILE") || ".";
-	const isWindows = Deno.build && Deno.build.os === "windows";
-	const separator = isWindows ? "\\" : "/";
-	return `${homeDir}${separator}.webdock-cli${separator}config.json`;
+	Deno.mkdirSync(join(homeDir, ".webdock-cli"), { recursive: true });
+	return join(homeDir, ".webdock-cli");
 }
 
+export function getConfigPath(): string {
+	return join(getConfigDir(), "config.json");
+}
 async function pathExists(path: string): Promise<boolean> {
 	try {
 		await Deno.stat(path);
@@ -14,12 +19,10 @@ async function pathExists(path: string): Promise<boolean> {
 	}
 }
 
+
 export async function saveConfig(config: { token?: string }): Promise<void> {
 	const configPath = getConfigPath();
-	const isWindows = Deno.build && Deno.build.os === "windows";
-	const separator = isWindows ? "\\" : "/";
-	const lastSep = configPath.lastIndexOf(separator);
-	const configDir = configPath.substring(0, lastSep);
+	const configDir = dirname(configPath);
 
 	try {
 		await Deno.mkdir(configDir, { recursive: true });

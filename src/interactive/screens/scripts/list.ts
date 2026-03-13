@@ -8,7 +8,7 @@ import { navigator } from "../../navigator.ts";
 export async function scriptsListScreen() {
 	const token = await getToken();
 	const client = new Webdock(token);
-	const response = await client.scripts.list();
+	const response = await client.account.scripts.list();
 	if (!response.success) {
 		console.error(response.error);
 		return navigator.goToMain();

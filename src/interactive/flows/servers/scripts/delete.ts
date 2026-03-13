@@ -23,7 +23,7 @@ export async function deleteServerScript(
 
 	console.log("\n🔄 Deleting script from Webdock...");
 
-	const response = await client.scripts.deleteScriptFromServer({
+	const response = await client.servers.scripts.delete({
 		scriptId: scriptId,
 		serverSlug: serverSlug,
 	});

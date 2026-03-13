@@ -22,7 +22,7 @@ export const listCommand = new Command()
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
 
-		const response = await client.scripts.list();
+		const response = await client.account.scripts.list();
 		if (!response.success) {
 			console.error(response.error);
 			Deno.exit(1);

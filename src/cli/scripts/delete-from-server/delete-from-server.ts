@@ -12,7 +12,7 @@ export const serverScriptsDeleteCommand = new Command()
 	.action(async (options, serverSlug: string, scriptId: number) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
-		const response = await client.scripts.deleteScriptFromServer({
+		const response = await client.servers.scripts.delete({
 			scriptId,
 			serverSlug,
 		});

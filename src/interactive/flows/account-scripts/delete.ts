@@ -20,7 +20,7 @@ export async function deleteScript(scriptId: number) {
 
 	console.log("\n🔄 Deleting script from Webdock...");
 
-	const response = await client.scripts.delete(
+	const response = await client.account.scripts.delete(
 		{
 			id: scriptId,
 		},

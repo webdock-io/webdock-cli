@@ -166,11 +166,11 @@ export const navigator: INavigator = {
 		return restoreSnapshot(serverSlug, snapshotId);
 	},
 	async runDeleteScript(id: number): Promise<void> {
-		const { deleteScript } = await import("./flows/scripts/delete.ts");
+		const { deleteScript } = await import("./flows/account-scripts/delete.ts");
 		return deleteScript(id);
 	},
 	async runUpdateScript(id: number): Promise<void> {
-		const { updateScript } = await import("./flows/scripts/update.ts");
+		const { updateScript } = await import("./flows/account-scripts/update.ts");
 		return updateScript(id);
 	},
 	async runDeleteShellUser(slug: string, userId: number): Promise<void> {
@@ -210,7 +210,7 @@ export const navigator: INavigator = {
 		return createShellUser(slug);
 	},
 	async runCreateScript(): Promise<void> {
-		const { createScript } = await import("./flows/scripts/create.ts");
+		const { createScript } = await import("./flows/account-scripts/create.ts");
 		return createScript();
 	},
 	async runCreateServerScript(slug: string): Promise<void> {

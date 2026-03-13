@@ -21,7 +21,7 @@ import { updateCommand } from "./cli/update.ts";
 
 export const cli = new Command()
   .name("webdock")
-  .version("v1.0.2")
+  .version("v1.0.3")
   .globalType("event-type", eventTypeEnum)
 
   .description("Webdock CLI - A command-line interface for the Webdock API")

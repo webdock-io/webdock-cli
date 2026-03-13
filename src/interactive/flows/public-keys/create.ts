@@ -1,10 +1,11 @@
-import { Confirm, Input } from "@cliffy/prompt";
+import { Confirm, Input, List, Select } from "@cliffy/prompt";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
 import { Spinner } from "@std/cli/unstable-spinner";
 import { multiLineInput } from "../../utils/multiline.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "../../navigator.ts";
+import { PathPicker } from "../../utils/path-picker.ts";
 
 export async function createSSHKey() {
 	const token = await getToken();
@@ -15,7 +16,27 @@ export async function createSSHKey() {
 		validate: (input) => input.length > 2 || "Name must be at least 3 characters",
 	});
 
-	const publicKey = await multiLineInput();
+	let publicKey = ""
+	const keyPathPickMethod = await Select.prompt({
+		message: "How would you like to provide your key?",
+		options: [
+			{
+				name: "Select a file from your drive",
+				value: "PICK"
+			},
+			{
+				name: "Enter the key manually",
+				value: "WRITE"
+			}
+		]
+	})
+	if (keyPathPickMethod == "PICK") {
+		const path = await new PathPicker().pickFile()
+		publicKey = await Deno.readTextFile(path);
+	} else {
+		publicKey = await multiLineInput();
+	}
+
 	if (!publicKey) {
 		console.log(
 			`❌${colors.bgRed(`Empty key detected. Canceling the operation.`)}`,

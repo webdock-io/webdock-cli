@@ -5,8 +5,11 @@ import { Table } from "@cliffy/table";
 import { InteractiveModeLogHelp } from "./help.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "./navigator.ts";
+import { open } from "@opensrc/deno-open";
+
 
 export async function main() {
+
 	const token = await getToken();
 	const client = new Webdock(token);
 	const response = await client.account.info();
@@ -54,10 +57,10 @@ export async function main() {
 			},
 			{
 				value: "SCRIPTS",
-				name: "5. Manage Scripts",
+				name: "5. Manage Account Scripts",
 			},
 			{
-				name: "6. Show Help!",
+				name: "6. Get Help!",
 				value: "HELP",
 			},
 			{
@@ -84,7 +87,7 @@ export async function main() {
 			await navigator.goToScriptsMenu();
 			break;
 		case "HELP":
-			InteractiveModeLogHelp();
+			await open("https://webdock.io/en/support")
 			break;
 		case "EXIT":
 			console.log("hasta la vista 👋");

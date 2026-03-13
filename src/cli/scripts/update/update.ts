@@ -27,7 +27,7 @@ export const updateCommand = new Command()
 		) => {
 			const token = await getToken(options.token);
 			const client = new Webdock(token);
-			const response = await client.scripts.update({
+			const response = await client.account.scripts.update({
 				name: name,
 				filename: filename,
 				content: content,

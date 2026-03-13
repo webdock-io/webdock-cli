@@ -49,7 +49,7 @@ export const serverScriptsCreateCommand = new Command()
 				return;
 			}
 
-			const response = await client.scripts.createOnServer({
+			const response = await client.servers.scripts.create({
 				scriptId: scriptId,
 				path: sanitizedPath,
 				makeScriptExecutable: options.executable,

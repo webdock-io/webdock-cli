@@ -4,17 +4,15 @@ import { getToken } from "../../../config.ts";
 import { FunFact } from "../../../cli/fun-fact.ts";
 import { Select } from "@cliffy/prompt/select";
 import { navigator } from "../../navigator.ts";
+import { Confirm } from "@cliffy/prompt";
 
 export async function archive(slug: string) {
 	const spinner = new Spinner();
 	const token = await getToken();
 	const client = new Webdock(token);
-	const confirm = await Select.prompt({
+	const confirm = await Confirm.prompt({
 		message: "Confirm Server Archiving:",
-		options: [
-			{ name: "✅ Yes, archive server", value: true },
-			{ name: "❌ Cancel", value: false },
-		],
+
 	});
 
 	if (!confirm) {
@@ -43,5 +41,5 @@ export async function archive(slug: string) {
 	if (!waitResult.success) return navigator.goToMain();
 
 	console.log("\n✅ Server Archived successfully!");
-	return navigator.goToServerActions(slug);
+	return navigator.goToServerList();
 }

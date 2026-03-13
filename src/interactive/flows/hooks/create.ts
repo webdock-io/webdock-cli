@@ -1,4 +1,4 @@
-import { Input, Select } from "@cliffy/prompt";
+import { Confirm, Input, Select } from "@cliffy/prompt";
 import { z } from "npm:zod";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
@@ -40,12 +40,8 @@ export async function createHook() {
 
 	if (isGoBack(_finalEventType)) return navigator.goToHooksList();
 
-	const confirm = await Select.prompt({
+	const confirm = await Confirm.prompt({
 		message: "Confirm hook creation:",
-		options: [
-			{ name: "✅ Create hook", value: true },
-			{ name: "❌ Cancel", value: false },
-		],
 	});
 
 	if (!confirm) {

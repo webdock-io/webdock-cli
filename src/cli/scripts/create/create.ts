@@ -26,7 +26,7 @@ export const createCommand = new Command()
 			createCommand.showHelp();
 			Deno.exit(1);
 		}
-		const response = await client.scripts.create({
+		const response = await client.account.scripts.create({
 			content,
 			filename: path,
 			name,
