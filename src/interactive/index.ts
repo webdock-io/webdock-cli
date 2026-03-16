@@ -2,7 +2,6 @@ import { Webdock } from "@webdock/sdk";
 import { getToken } from "../config.ts";
 import { Select } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";
-import { InteractiveModeLogHelp } from "./help.ts";
 import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "./navigator.ts";
 import { open } from "@opensrc/deno-open";
@@ -29,7 +28,7 @@ export async function main() {
 			[
 				colors.bold(colors.magenta("Balance:")),
 				colors.red(
-					`${response.response.body.accountBalanceRaw} ${response.response.body.accountBalanceCurrency}`,
+					`${Number(response.response.body.accountBalanceRaw) / 1000} ${response.response.body.accountBalanceCurrency}`,
 				),
 			],
 		])
@@ -87,7 +86,7 @@ export async function main() {
 			await navigator.goToScriptsMenu();
 			break;
 		case "HELP":
-			await open("https://webdock.io/en/support")
+			console.log("Contact out support team at: https://webdock.io/en/support")
 			break;
 		case "EXIT":
 			console.log("hasta la vista 👋");

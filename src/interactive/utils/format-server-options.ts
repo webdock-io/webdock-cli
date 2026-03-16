@@ -17,7 +17,7 @@ export function formatServerOption(server: ServerEntry, index: number) {
 	const paddedName = name.padEnd(20);
 	const formattedDate = new Date(date).toLocaleDateString();
 	const formattedProfile = colors.underline.bold.italic.bgBlue(
-		`Resources: ${profile}`.padEnd(50).slice(0, 33),
+		`Profile: ${profile}`.padEnd(50).slice(0, 33),
 	);
 	return {
 		name: `\n\t

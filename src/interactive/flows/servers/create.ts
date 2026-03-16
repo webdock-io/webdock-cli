@@ -159,17 +159,22 @@ export async function createWebdockServer() {
 			return
 		}
 
-		const selectedScript = await Select.prompt({
-			message: "Choose script to run after provisiong",
-			options: accountScripts.response.body
-				.map((script, idx) => {
-					return {
-						name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
-						value: script.id
-					}
-				})
-		})
-		userScriptId = selectedScript
+		if (accountScripts.response.body.length == 0) {
+			console.log("Skipping: Found no account scripts")
+		} else {
+			const selectedScript = await Select.prompt({
+				message: "Choose script to run after provisiong",
+				options: accountScripts.response.body
+					.map((script, idx) => {
+						return {
+							name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
+							value: script.id
+						}
+					})
+			})
+			userScriptId = selectedScript
+		}
+
 	}
 
 
