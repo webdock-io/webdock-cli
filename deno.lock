@@ -37,7 +37,7 @@
     "jsr:@std/testing@^1.0.17": "1.0.17",
     "jsr:@std/text@^1.0.17": "1.0.17",
     "npm:@types/node@*": "22.12.0",
-    "npm:@webdock/sdk@^1.1.2": "1.1.2",
+    "npm:@webdock/sdk@^1.1.104": "1.1.104",
     "npm:axios@*": "1.13.6",
     "npm:axios@^1.13.6": "1.13.6",
     "npm:csv-stringify@*": "6.6.0",
@@ -219,8 +219,8 @@
         "undici-types"
       ]
     },
-    "@webdock/sdk@1.1.2": {
-      "integrity": "sha512-LuTiN5iHoCYd04jajcmBZ9NFfyP5pOQlTcu4rZfFA4iQOyxvnk6ZOdSr7FKwtakz/INQHJVUYbw4wwMCujfNBg==",
+    "@webdock/sdk@1.1.104": {
+      "integrity": "sha512-qf+VR+SdyYMWbhAvqu6U390VN9/KiMuuNimouIbbkr4BK1/UfL1mU1f5ZT1KFg7p4AHiLw9lFiDFdJia0ZVfcg==",
       "dependencies": [
         "axios",
         "dotenv",
@@ -672,7 +672,7 @@
       "jsr:@std/path@^1.1.4",
       "jsr:@std/semver@^1.0.8",
       "jsr:@std/testing@^1.0.17",
-      "npm:@webdock/sdk@^1.1.2",
+      "npm:@webdock/sdk@^1.1.104",
       "npm:axios@^1.13.6",
       "npm:csv-stringify@^6.6.0",
       "npm:csv@^6.4.1",

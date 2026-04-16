@@ -8,7 +8,7 @@ import { colors } from "@cliffy/ansi/colors";
 import { getServerOptions } from "../../screens/servers/list.ts";
 import { navigator } from "../../navigator.ts";
 import { Confirm, Select } from "@cliffy/prompt";
-const MiB_TO_GiB = 0.001048576;
+export const MiB_TO_GiB = 0.001048576;
 export async function createWebdockServer() {
 	const spinner = new Spinner();
 
@@ -151,7 +151,7 @@ export async function createWebdockServer() {
 		]
 	})
 
-	let userScriptId = 0
+	let userScriptId = ""
 	if (shouldRunScript === "ACCOUNT") {
 		const accountScripts = await client.account.scripts.list()
 		if (!accountScripts.success) {
@@ -168,7 +168,7 @@ export async function createWebdockServer() {
 					.map((script, idx) => {
 						return {
 							name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
-							value: script.id
+							value: script.slug
 						}
 					})
 			})
@@ -195,7 +195,7 @@ export async function createWebdockServer() {
 		locationId: "dk",
 		profileSlug: profile,
 		...(imageType === "new" ? { imageSlug } : { snapshotId: snapshotChoice }),
-		...(userScriptId === 0 ? { userScriptId } : {}),
+		...(userScriptId === "" ? { userScriptId } : {}),
 
 	});
 	spinner.stop();

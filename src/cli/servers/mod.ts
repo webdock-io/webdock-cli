@@ -13,6 +13,9 @@ import { stopCommand } from "./stop/stop.ts";
 import { archiveCommand } from "./archive/archive.ts";
 import { updateCommand } from "./update/update.ts";
 import { Command } from "@cliffy/command";
+import { uncancelCommand } from "./uncancel/uncancel.ts";
+import { serverSettings } from "./settings/mod.ts";
+import { serverIdentity } from "./identity/mod.ts";
 
 export const serversCommand = new Command()
 	.name("servers")
@@ -24,6 +27,8 @@ export const serversCommand = new Command()
 			Deno.exit(1);
 		}),
 	).hidden()
+	.command("identity", serverIdentity)
+	.command("settings", serverSettings)
 	.command("list", listCommand)
 	.command("get", getCommand)
 	.command("create", createCommand)
@@ -32,6 +37,7 @@ export const serversCommand = new Command()
 	.command("start", startCommand)
 	.command("stop", stopCommand)
 	.command("reboot", rebootCommand)
+	.command("uncancel", uncancelCommand)
 	.command("reinstall", reinstallCommand)
 	.command("resize", resizeCommand)
 	.command("metrics", metricsCommand)

@@ -36,7 +36,7 @@
 		"form-data": "npm:form-data@^4.0.5",
 		"systeminformation": "npm:systeminformation@^5.31.4",
 		"zod": "npm:zod@^3.25.76",
-		"@webdock/sdk": "npm:@webdock/sdk@^1.1.2"
+		"@webdock/sdk": "npm:@webdock/sdk@^1.1.104"
 	},
 	"fmt": {
 		"lineWidth": 200,
