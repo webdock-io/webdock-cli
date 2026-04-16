@@ -29,8 +29,6 @@ export async function reinstall(slug: string) {
 
 	if (isGoBack(image)) return navigator.goToServerActions(slug);
 
-
-
 	const shouldRunScript = await Select.prompt({
 		message: "Would you like to run a SCRIPT as part of the provisioning?",
 		options: [
@@ -42,20 +40,20 @@ export async function reinstall(slug: string) {
 			{
 				name: "Yes, run an account script",
 				value: "ACCOUNT",
-			}
-		]
-	})
+			},
+		],
+	});
 
-	let userScriptId = 0
+	let userScriptId = 0;
 	if (shouldRunScript === "ACCOUNT") {
-		const accountScripts = await client.account.scripts.list()
+		const accountScripts = await client.account.scripts.list();
 		if (!accountScripts.success) {
-			console.error(colors.red(accountScripts.error))
-			return
+			console.error(colors.red(accountScripts.error));
+			return;
 		}
 
 		if (accountScripts.response.body.length == 0) {
-			console.log("Skipping: Found no account scripts")
+			console.log("Skipping: Found no account scripts");
 		} else {
 			const selectedScript = await Select.prompt({
 				message: "Choose script to run after provisiong",
@@ -63,21 +61,16 @@ export async function reinstall(slug: string) {
 					.map((script, idx) => {
 						return {
 							name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
-							value: script.id
-						}
-					})
-			})
-			userScriptId = selectedScript
+							value: script.id,
+						};
+					}),
+			});
+			userScriptId = selectedScript;
 		}
-
 	}
-
-
-
 
 	const confirm = await Confirm.prompt({
 		message: "Confirm server reinstalation:",
-
 	});
 
 	if (!confirm) {
@@ -91,7 +84,7 @@ export async function reinstall(slug: string) {
 	const response = await client.servers.reinstall({
 		imageSlug: image,
 		serverSlug: slug,
-		...(userScriptId != 0 ? { userScriptId: userScriptId } : {})
+		...(userScriptId != 0 ? { userScriptId: userScriptId } : {}),
 	});
 	spinner.stop();
 

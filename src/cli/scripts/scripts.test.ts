@@ -1,5 +1,5 @@
-import { expect } from "jsr:@std/expect/expect";
-import { join } from "jsr:@std/path@^1.0.8/join";
+import { expect } from "@std/expect/expect";
+import { join } from "@std/path/join";
 import { extractIdsFromStdOut, extractSlugsFromStdOut } from "../../test_utils.ts";
 const decoder = new TextDecoder();
 

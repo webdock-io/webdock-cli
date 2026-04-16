@@ -23,7 +23,7 @@ export async function createServerScript(slug: string) {
 	// 	);
 	// 	return navigator.goToServerScripts(slug);
 	// }
-	const accountScripts = await client.account.scripts.list()
+	const accountScripts = await client.account.scripts.list();
 	spinner.stop();
 
 	if (!accountScripts.success) {
@@ -34,8 +34,6 @@ export async function createServerScript(slug: string) {
 		return navigator.goToServerScripts(slug);
 	}
 
-
-
 	if (accountScripts.response.body.length === 0) {
 		console.log("\n📭 No scripts available. Create one first!");
 		return navigator.goToServerScripts(slug);
@@ -44,7 +42,6 @@ export async function createServerScript(slug: string) {
 	const script = await Select.prompt<typeof accountScripts.response.body[0]>({
 		message: "Select a script to deploy:",
 		options: [
-
 			// ...(accountScripts.response.body.length != 0 ? [Select.separator("----- Account Scripts -----")] : []),
 			...accountScripts.response.body.map((script) => ({
 				value: script,
@@ -57,7 +54,6 @@ export async function createServerScript(slug: string) {
 			// })),
 		],
 	});
-
 
 	const path = await Input.prompt({
 		message: "Enter deployment path:",
@@ -142,6 +138,4 @@ export async function createServerScript(slug: string) {
 		console.log("\n⚡ Script execution started - check server logs for output");
 	}
 	return navigator.goToServerScripts(slug);
-
-
 }

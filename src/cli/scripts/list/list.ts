@@ -35,7 +35,7 @@ export const listCommand = new Command()
 				"description",
 				"filename",
 				"content",
-				"slug"
+				"slug",
 			] as const;
 			const cvsData = response.response.body as unknown as Record<
 				string,

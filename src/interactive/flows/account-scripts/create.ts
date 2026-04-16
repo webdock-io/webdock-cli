@@ -21,22 +21,22 @@ export async function createScript() {
 		validate: (val) => val.length >= 5 || "Filename must be at least 5 characters",
 	});
 
-	let script = ""
+	let script = "";
 	const keyPathPickMethod = await Select.prompt({
 		message: "How would you like to provide your key?",
 		options: [
 			{
 				name: "Select a file from your drive",
-				value: "PICK"
+				value: "PICK",
 			},
 			{
 				name: "Enter the script manually",
-				value: "WRITE"
-			}
-		]
-	})
+				value: "WRITE",
+			},
+		],
+	});
 	if (keyPathPickMethod == "PICK") {
-		const path = await new PathPicker().pickFile()
+		const path = await new PathPicker().pickFile();
 		script = await Deno.readTextFile(path);
 	} else {
 		script = await multiLineInput();

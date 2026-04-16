@@ -6,8 +6,8 @@ import { getToken } from "../../../config.ts";
 import { wrapId, wrapSlug } from "../../../test_utils.ts";
 
 export const listArchivedServersCommand = new Command()
-	.name("Archived servers")
-	.description("List Archived servers")
+	.name("archived-servers")
+	.description("List archived servers")
 	.option(
 		"-t, --token <token:string>",
 		"API token used for authenticating requests. Required for secure access. Make sure to provide a valid token string.",
@@ -19,18 +19,23 @@ export const listArchivedServersCommand = new Command()
 	.action(async (options) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
-		const response = await client.account.listArchivedServers()
+		const response = await client.account.listArchivedServers();
 
 		if (!response.success) {
 			Deno.exit(1);
 		}
 
 		if (options.csv) {
-			const cvsObject: Record<string, unknown> = response.response.body[0];
-			const keys = Object.keys(cvsObject);
+			const csvObject: Record<string, unknown> = response.response.body[0] ?? {};
+			const keys = Object.keys(csvObject);
+
+			if (keys.length === 0) {
+				console.log("");
+				return;
+			}
 
 			console.log(
-				stringify([keys.map((key) => cvsObject[key])], {
+				stringify([keys.map((key) => csvObject[key])], {
 					columns: keys,
 					header: true,
 				}),
@@ -52,9 +57,10 @@ export const listArchivedServersCommand = new Command()
 			String(item.virtualization ?? "-"),
 			String(item.type ?? "-"),
 			wrapSlug(String(item.serverSlug ?? "-")),
-		]); new Table()
-			.header(["ID", "Name", "Email", "Team Leader", "Balance"])
+		]);
 
+		new Table()
+			.header(["ID", "Callback ID", "Completed", "Deletable", "Name", "Virtualization", "Type", "Server Slug"])
 			.body(rows)
 			.border(true)
 			.render();

@@ -28,8 +28,6 @@ export async function resizeServerAction(slug: string) {
 	console.log(`📦 Current Profile: ${serverInfo.response.body.profile}`);
 	console.log("------------------------------");
 
-
-
 	const possibleProfiles = await client.profiles.list({ profileSlug: serverInfo.response.body.profile ?? "" });
 	if (!possibleProfiles.success) {
 		console.error(possibleProfiles.error);
@@ -43,7 +41,6 @@ export async function resizeServerAction(slug: string) {
 	profiles.response.body = profiles.response.body.sort((a, b) => a.cpu.threads - b.cpu.threads);
 
 	const longestName = Math.max(...profiles.response.body.map((p) => p.name.length));
-
 
 	const filterd = possibleProfiles.response.body.map((p) => ({
 		name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${(p.disk * MiB_TO_GiB).toFixed(0)}GB SSD`,

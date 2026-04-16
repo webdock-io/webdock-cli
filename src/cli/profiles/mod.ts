@@ -18,4 +18,3 @@ export const profilesCommand = new Command()
 	.command("create", createCommand)
 	.description("Manage server profiles")
 	.command("list", listCommand);
-;

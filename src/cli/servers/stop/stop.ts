@@ -24,14 +24,11 @@ export const stopCommand = new Command()
 		}
 
 		if (options.wait) {
-
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			if (!waitResult.success) {
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
-
-
 		}
 
 		console.log(

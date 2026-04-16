@@ -16,6 +16,7 @@ import { Command } from "@cliffy/command";
 import { uncancelCommand } from "./uncancel/uncancel.ts";
 import { serverSettings } from "./settings/mod.ts";
 import { serverIdentity } from "./identity/mod.ts";
+import { serverSsl } from "./ssl/mod.ts";
 
 export const serversCommand = new Command()
 	.name("servers")
@@ -29,6 +30,7 @@ export const serversCommand = new Command()
 	).hidden()
 	.command("identity", serverIdentity)
 	.command("settings", serverSettings)
+	.command("ssl", serverSsl)
 	.command("list", listCommand)
 	.command("get", getCommand)
 	.command("create", createCommand)

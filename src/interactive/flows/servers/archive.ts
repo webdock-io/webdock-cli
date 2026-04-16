@@ -12,7 +12,6 @@ export async function archive(slug: string) {
 	const client = new Webdock(token);
 	const confirm = await Confirm.prompt({
 		message: "Confirm Server Archiving:",
-
 	});
 
 	if (!confirm) {

@@ -36,7 +36,6 @@ export const listCommand = new Command()
 			Deno.exit(1);
 		}
 
-
 		if (options.csv) {
 			// deno-lint-ignore no-explicit-any
 			const data = response.response.body.map((item: Record<string, any>) => {

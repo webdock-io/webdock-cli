@@ -33,8 +33,6 @@ export const listCommand = new Command()
 			return;
 		}
 
-
-
 		if (options.csv) {
 			const keys = ["slug", "name", "location", "status", "ipv4"] as const;
 			const data = response.response.body as unknown as Record<string, unknown>[];

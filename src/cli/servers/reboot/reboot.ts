@@ -2,7 +2,7 @@ import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
- 
+
 export const rebootCommand = new Command()
 	.description("Start a server")
 	.arguments("<serverSlug:string>")
@@ -23,13 +23,11 @@ export const rebootCommand = new Command()
 		}
 
 		if (options.wait) {
-			
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			if (!waitResult.success) {
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
- 
 		}
 
 		console.log(

@@ -10,7 +10,6 @@ import { Buffer } from "node:buffer";
 import { decodeBase64 } from "jsr:@std/encoding@~1.0.5/base64";
 import { PathPicker } from "../../utils/path-picker.ts";
 
-
 export async function fetchFile(slug: string) {
 	const token = await getToken();
 	const client = new Webdock(token);
@@ -25,11 +24,9 @@ export async function fetchFile(slug: string) {
 	const sanitizedPath = await sanitizePath(path);
 	if (!sanitizedPath) return;
 
-
 	await new FunFact().show();
 	spinner.message = "⏳ Waiting for operation to complete...";
 	spinner.start();
-
 
 	const response = await client.servers.fetchFile({
 		path: sanitizedPath,
@@ -42,8 +39,7 @@ export async function fetchFile(slug: string) {
 		return navigator.goToMain();
 	}
 
-
-	const DirPath = await new PathPicker().pickDir()
+	const DirPath = await new PathPicker().pickDir();
 	Deno.mkdir(dirname(DirPath), { recursive: true });
 
 	let fileName: string;
@@ -51,14 +47,14 @@ export async function fetchFile(slug: string) {
 		fileName = await Input.prompt({
 			message: "💾 Enter a name for the downloaded file:",
 			minLength: 1,
-		})
+		});
 		const filePath = join(DirPath, fileName);
 
 		if (await Deno.stat(filePath).then(() => true).catch(() => false)) {
 			const overwrite = await Confirm.prompt("⚠️ File already exists. Do you want to overwrite it?");
 			if (!overwrite) continue;
 		}
-		break
+		break;
 	}
 	const filePath = join(DirPath, fileName);
 
@@ -68,4 +64,3 @@ export async function fetchFile(slug: string) {
 	console.log("\n✅ File successfully retrieved!");
 	return navigator.goToServerActions(slug);
 }
-

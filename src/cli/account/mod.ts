@@ -13,6 +13,5 @@ export const accountCommand = new Command()
 			Deno.exit(1);
 		}),
 	).hidden()
-	.command("list_archived_server", listArchivedServersCommand)
+	.command("archived-servers", listArchivedServersCommand)
 	.command("info", infoCommand);
-

@@ -28,7 +28,6 @@ export const restoreCommand = new Command()
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
-	 
 		}
 
 		console.log(

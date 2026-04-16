@@ -1,9 +1,14 @@
 import { Command } from "@cliffy/command";
-import { updateserverIdentity } from "./update/update.ts";
+import { renewServerSslCommand } from "./update/update.ts";
 
-export const serverIdentity = new Command()
-    .name("server Identity")
-    .description("Manage server Identity.")
-    .default("help")
-    .command("-h, help", new Command().description("get help").action(() => { serverIdentity.showHelp() }))
-    .command("update", updateserverIdentity)
+export const serverSsl = new Command()
+	.name("server ssl")
+	.description("Manage server SSL.")
+	.default("help")
+	.command(
+		"-h, help",
+		new Command().description("get help").action(() => {
+			serverSsl.showHelp();
+		}),
+	)
+	.command("update", renewServerSslCommand);

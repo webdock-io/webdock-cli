@@ -17,8 +17,7 @@ export async function createWebdockServer() {
 
 	const serverName = await Input.prompt({
 		message: "Enter server name:",
-		validate: (input) =>
-			input.length > 3 || "Name must be at least 4 characters",
+		validate: (input) => input.length > 3 || "Name must be at least 4 characters",
 	});
 
 	const profiles = await client.profiles.list({ locationId: "dk" });
@@ -33,12 +32,12 @@ export async function createWebdockServer() {
 		options: profiles.response.body
 			.sort((a, b) => a.disk - b.disk)
 			.map((p) => ({
-				name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${(p.disk * MiB_TO_GiB).toFixed(0)}GB SSD`,
+				name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${
+					(p.disk * MiB_TO_GiB).toFixed(0)
+				}GB SSD`,
 				value: p.slug,
 			}))
-
 			.concat(goBackOption),
-
 	});
 	if (isGoBack(profile)) {
 		return navigator.goToMain();
@@ -147,20 +146,20 @@ export async function createWebdockServer() {
 			{
 				name: "Yes, run an account script",
 				value: "ACCOUNT",
-			}
-		]
-	})
+			},
+		],
+	});
 
-	let userScriptId = ""
+	let userScriptId = "";
 	if (shouldRunScript === "ACCOUNT") {
-		const accountScripts = await client.account.scripts.list()
+		const accountScripts = await client.account.scripts.list();
 		if (!accountScripts.success) {
-			console.error(colors.red(accountScripts.error))
-			return
+			console.error(colors.red(accountScripts.error));
+			return;
 		}
 
 		if (accountScripts.response.body.length == 0) {
-			console.log("Skipping: Found no account scripts")
+			console.log("Skipping: Found no account scripts");
 		} else {
 			const selectedScript = await Select.prompt({
 				message: "Choose script to run after provisiong",
@@ -168,19 +167,16 @@ export async function createWebdockServer() {
 					.map((script, idx) => {
 						return {
 							name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
-							value: script.slug
-						}
-					})
-			})
-			userScriptId = selectedScript
+							value: script.slug,
+						};
+					}),
+			});
+			userScriptId = selectedScript;
 		}
-
 	}
-
 
 	const confirm = await Confirm.prompt({
 		message: "Confirm server creation:",
-
 	});
 
 	if (!confirm) {
@@ -196,7 +192,6 @@ export async function createWebdockServer() {
 		profileSlug: profile,
 		...(imageType === "new" ? { imageSlug } : { snapshotId: snapshotChoice }),
 		...(userScriptId === "" ? { userScriptId } : {}),
-
 	});
 	spinner.stop();
 
