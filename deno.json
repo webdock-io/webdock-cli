@@ -9,7 +9,7 @@
 	},
 	"tasks": {
 		"fmt": "deno fmt --watch *",
-		"test:cli": "TESTING=true && deno test --allow-read --allow-write --allow-env --allow-run --allow-net --allow-sys --no-check ./src/cli"
+		"test:cli": "TESTING=true && deno test --allow-read --allow-write --allow-env --allow-run --allow-net --allow-sys --no-check"
 	},
 	"unstable": [
 		"bare-node-builtins"
@@ -36,7 +36,7 @@
 		"form-data": "npm:form-data@^4.0.5",
 		"systeminformation": "npm:systeminformation@^5.31.4",
 		"zod": "npm:zod@^3.25.76",
-		"@webdock/sdk": "npm:@webdock/sdk@^1.0.59694"
+		"@webdock/sdk": "npm:@webdock/sdk@^1.1.2"
 	},
 	"fmt": {
 		"lineWidth": 200,

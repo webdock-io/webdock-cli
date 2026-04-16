@@ -37,7 +37,7 @@
     "jsr:@std/testing@^1.0.17": "1.0.17",
     "jsr:@std/text@^1.0.17": "1.0.17",
     "npm:@types/node@*": "22.12.0",
-    "npm:@webdock/sdk@^1.0.59694": "1.0.59694",
+    "npm:@webdock/sdk@^1.1.2": "1.1.2",
     "npm:axios@*": "1.13.6",
     "npm:axios@^1.13.6": "1.13.6",
     "npm:csv-stringify@*": "6.6.0",
@@ -219,8 +219,8 @@
         "undici-types"
       ]
     },
-    "@webdock/sdk@1.0.59694": {
-      "integrity": "sha512-Zwq1GeAUZHDDtoOUxdKSNb7s2YeUQUdwPzOrBMeHYNyCQBh5uYe6NRXmIQ9CUfHq2wIJi6jIxOYTvr5eXE1zBQ==",
+    "@webdock/sdk@1.1.2": {
+      "integrity": "sha512-LuTiN5iHoCYd04jajcmBZ9NFfyP5pOQlTcu4rZfFA4iQOyxvnk6ZOdSr7FKwtakz/INQHJVUYbw4wwMCujfNBg==",
       "dependencies": [
         "axios",
         "dotenv",
@@ -318,8 +318,8 @@
     "detect-libc@2.1.2": {
       "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ=="
     },
-    "dotenv@17.3.1": {
-      "integrity": "sha512-IO8C/dzEb6O3F9/twg6ZLXz164a2fhTnEWb95H23Dm4OuN+92NmEAlTrupP9VW6Jm3sO26tQlqyvyi4CsnY9GA=="
+    "dotenv@17.4.2": {
+      "integrity": "sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw=="
     },
     "drivelist@12.0.2": {
       "integrity": "sha512-Nps4pc1ukIqDj7v00wGgBkS7P3VVEZZKcaTPVcE1Yl+dLojXuEv76BuSg6HgmhjeOFIIMz8q7Y+2tux6gYqCvg==",
@@ -672,7 +672,7 @@
       "jsr:@std/path@^1.1.4",
       "jsr:@std/semver@^1.0.8",
       "jsr:@std/testing@^1.0.17",
-      "npm:@webdock/sdk@^1.0.59694",
+      "npm:@webdock/sdk@^1.1.2",
       "npm:axios@^1.13.6",
       "npm:csv-stringify@^6.6.0",
       "npm:csv@^6.4.1",
