@@ -1,4 +1,4 @@
-export const isTesting = true;
+export const isTesting = false;
 
 export function extractIdsFromStdOut(stdout: string) {
 	const ids = [...stdout.matchAll(/<id>(\d+)<\/id>/g)]
