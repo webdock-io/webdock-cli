@@ -1,3 +1,4 @@
+import { listArchivedServersCommand } from "./archived-servers/list-archived-servers.ts";
 import { infoCommand } from "./info/info.ts";
 import { Command } from "@cliffy/command";
 
@@ -12,4 +13,5 @@ export const accountCommand = new Command()
 			Deno.exit(1);
 		}),
 	).hidden()
+	.command("archived-servers", listArchivedServersCommand)
 	.command("info", infoCommand);

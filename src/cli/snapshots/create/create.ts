@@ -33,12 +33,11 @@ export const createCommand = new Command()
 		if (options.wait) {
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			console.log("waitResult", waitResult);
-			
+
 			if (!waitResult.success) {
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
- 
 		}
 
 		if (options.json) {

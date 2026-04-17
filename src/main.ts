@@ -1,6 +1,5 @@
 #!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-net --allow-sys --allow-run
 
-
 import { Command } from "@cliffy/command";
 import { accountCommand } from "./cli/account/mod.ts";
 import { eventsCommand } from "./cli/events/mod.ts";
@@ -18,38 +17,36 @@ import { main } from "./interactive/index.ts";
 import { eventTypeEnum } from "./cli/event-types.ts";
 import { updateCommand } from "./cli/update.ts";
 
-
 export const cli = new Command()
-  .name("webdock")
-  .version("v1.0.4")
-  .globalType("event-type", eventTypeEnum)
-
-  .description("Webdock CLI - A command-line interface for the Webdock API")
-  .default("it")
-  .command(
-    "help",
-    new Command().action(() => {
-      cli.showHelp();
-    })
-  )
-  .hidden()
-  .command(
-    "it",
-    new Command().action(() => main())
-  )
-  .hidden()
-  .command("init", initCommand)
-  .command("servers", serversCommand)
-  .command("locations", locationsCommand)
-  .command("images", imagesCommand)
-  .command("profiles", profilesCommand)
-  .command("scripts", scriptsCommand)
-  .command("snapshots", snapshotsCommand)
-  .command("sshkeys", sshkeysCommand)
-  .command("events", eventsCommand)
-  .command("account", accountCommand)
-  .command("shellusers", shellusersCommand)
-  .command("hooks", hooksCommand)
-  .command("update", updateCommand);
+	.name("webdock")
+	.version("v1.0.41")
+	.globalType("event-type", eventTypeEnum)
+	.description("Webdock CLI - A command-line interface for the Webdock API")
+	.default("it")
+	.command(
+		"help",
+		new Command().action(() => {
+			cli.showHelp();
+		}),
+	)
+	.hidden()
+	.command(
+		"it",
+		new Command().action(() => main()),
+	)
+	.hidden()
+	.command("init", initCommand)
+	.command("servers", serversCommand)
+	.command("locations", locationsCommand)
+	.command("images", imagesCommand)
+	.command("profiles", profilesCommand)
+	.command("scripts", scriptsCommand)
+	.command("snapshots", snapshotsCommand)
+	.command("sshkeys", sshkeysCommand)
+	.command("events", eventsCommand)
+	.command("account", accountCommand)
+	.command("shellusers", shellusersCommand)
+	.command("hooks", hooksCommand)
+	.command("update", updateCommand);
 
 await cli.parse(Deno.args);

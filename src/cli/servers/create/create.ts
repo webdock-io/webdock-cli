@@ -5,32 +5,21 @@ import { wrapSlug } from "../../../test_utils.ts";
 import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
 import { getToken } from "../../../config.ts";
- 
+
 export const createCommand = new Command()
 	.description("Create a Server!")
 	.arguments("<name:string> <locationId:string> <profileSlug:string>")
 	.option("-t, --token <token:string>", "API token used for authentication")
-	.option(
-		"-i, --imageSlug <imageSlug:string>",
-		"Slug identifier of the server image",
-	)
-	.option(
-		"-v, --virtualization <virtualization:string>",
-		"Type of virtualization to use",
-	)
+	.option("-i, --imageSlug <imageSlug:string>", "Slug identifier of the server image", { conflicts: ["snapshotId"] })
+	.option("-v, --virtualization <virtualization:string>", "Type of virtualization to use")
 	.option("-s, --slug <slug:string>", "Unique Slug for the server")
+	.option("-a, --snapshotId <snapshotId:number>", "Optional snapshot ID to restore the server from", { conflicts: ["imageSlug"] })
+	.option("--wait", "Wait until the server is fully up and running before exiting")
+	.option("--json", "Display the results in a json format instead of a Table", { conflicts: ["csv"] })
 	.option(
-		"-a, --snapshotId <snapshotId:number>",
-		"Optional snapshot ID to restore the server from",
+		"--userScriptId <userScriptId:string>",
+		"Optional user/account script ID/slug. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.",
 	)
-	.option(
-		"--wait",
-		"Wait until the server is fully up and running before exiting",
-	)
-	.option("--json", "Display the results in a json format instead of a Table", {
-		conflicts: ["csv"],
-	})
-	.option("--userScriptId <userScriptId:number>", "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.")
 	.option("--csv", "Print the result as a CSV", { conflicts: ["json"] })
 	.action(async (options, name, locationId, profileSlug) => {
 		const token = await getToken(options.token);
@@ -53,10 +42,8 @@ export const createCommand = new Command()
 			locationId: locationId,
 			profileSlug: profileSlug as string,
 			virtualization: options.virtualization,
-			...(options.imageSlug
-				? { imageSlug: options.imageSlug }
-				: { snapshotId: options.snapshotId }),
-			...(	options.userScriptId ? { userScriptId: options.userScriptId } : {}),
+			...(options.imageSlug ? { imageSlug: options.imageSlug } : { snapshotId: options.snapshotId }),
+			...(options.userScriptId ? { userScriptId: options.userScriptId } : {}),
 		});
 
 		if (!response.success) {
@@ -65,7 +52,6 @@ export const createCommand = new Command()
 		}
 
 		if (options.wait) {
-			
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			if (!waitResult.success) {
 				console.error(waitResult.error);

@@ -1,5 +1,5 @@
 import { Command } from "@cliffy/command";
-import { saveConfig, getConfigPath } from "../config.ts";
+import { getConfigPath, saveConfig } from "../config.ts";
 
 export const initCommand = new Command()
 	.name("init")

@@ -35,6 +35,7 @@ export const listCommand = new Command()
 				"description",
 				"filename",
 				"content",
+				"slug",
 			] as const;
 			const cvsData = response.response.body as unknown as Record<
 				string,
@@ -56,10 +57,11 @@ export const listCommand = new Command()
 		}
 
 		new Table()
-			.header(["ID", "Name", "Description", "Filename", "Content"])
+			.header(["ID", "Slug", "Name", "Description", "Filename", "Content"])
 			.body(
 				response.response.body.map((script) => [
 					wrapId(script.id),
+					script.slug,
 					script.name,
 					script.description || "N/A",
 					script.filename || "N/A",

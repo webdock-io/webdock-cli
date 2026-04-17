@@ -3,7 +3,7 @@ import { Command } from "@cliffy/command";
 import { Webdock } from "@webdock/sdk";
 import { sanitizePath } from "../../../utils/sanitize-path.ts";
 import { getToken } from "../../../config.ts";
- 
+
 // Fetch file command
 export const fetchFileCommand = new Command()
 	.name("fetch-file")
@@ -37,14 +37,11 @@ export const fetchFileCommand = new Command()
 		}
 
 		if (options.wait) {
-			
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			if (!waitResult.success) {
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
-
- 
 		}
 
 		console.log(

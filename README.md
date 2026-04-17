@@ -7,6 +7,7 @@ The official command-line interface for managing your Webdock.io resources.
 <img src="assets/webdock.gif" alt="Webdock Interactive Mode" style="width:100%;border-radius:10px">
 
 ## Prerequisites
+
 Before you can use webdock-cli, you need a Webdock API Token.
 
 You can generate an API token from your Webdock account dashboard in the API Tokens section.
@@ -14,25 +15,29 @@ You can generate an API token from your Webdock account dashboard in the API Tok
 ## Installation
 
 ### Linux
+
 You can install webdock-cli using our convenient installer script. It will download the latest binary for your system and place it in /usr/local/bin.
+
 ```bash
 curl -fsSL 'https://cli-src.webdock.tech/install/linux.sh' | sudo bash
 ```
- 
+
 ### Windows (PowerShell)
+
 For Windows, run the following command in an administrator PowerShell terminal. This will download and execute the installer script.
 
- 
 ```powershell
 irm 'https://cli-src.webdock.tech/install/windows.ps1' | iex
 ```
 
 ### MacOS
+
 ```macos
 curl -fsSL 'https://cli-src.webdock.tech/install/mac.sh' | sudo bash
 ```
- 
+
 ## Table of Contents
+
 - [init](#init)
 - [account](#account)
 - [events](#events)
@@ -49,19 +54,23 @@ curl -fsSL 'https://cli-src.webdock.tech/install/mac.sh' | sudo bash
 ---
 
 ## `init`
+
 **Initialize the CLI with your API token.**
 
 ```
 webdock init -t <token>
 ```
+
 - `-t, --token <token>`: API token for authentication (required)
 
 ---
 
 ## `account`
+
 **Manage account information.**
 
 ### Subcommands:
+
 - `info`: Get account information
   - `-t, --token <token>`: API token for authentication
   - `--json`: Output as JSON
@@ -70,9 +79,11 @@ webdock init -t <token>
 ---
 
 ## `events`
+
 **Manage account events.**
 
 ### Subcommands:
+
 - `list`: List all events
   - `-t, --token <token>`: API token for authentication
   - `-p, --page <page>`: Page number (default: 1)
@@ -81,15 +92,17 @@ webdock init -t <token>
   - `--json`: Output as JSON
   - `--csv`: Output as CSV
 
-**Event Types:**
-provision, restore-server, change-profile, set-state, delete, backup, set-hostnames, update-webroot, setup-ssl, install-wordpress, manage-wordpress, manage-shelluser, manage-keys, toggle-passwordauth, manage-mysql, manage-dbuser, manage-ftpuser, set-php-settings, cronjob, pull-file, push-file, delete-file, execute-file
+**Event Types:** provision, restore-server, change-profile, set-state, delete, backup, set-hostnames, update-webroot, setup-ssl, install-wordpress, manage-wordpress, manage-shelluser, manage-keys,
+toggle-passwordauth, manage-mysql, manage-dbuser, manage-ftpuser, set-php-settings, cronjob, pull-file, push-file, delete-file, execute-file
 
 ---
 
 ## `hooks`
+
 **Manage event hooks and callbacks.**
 
 ### Subcommands:
+
 - `list`: List event hooks
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -108,9 +121,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `images`
+
 **Manage server images.**
 
 ### Subcommands:
+
 - `list`: List all images
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -118,9 +133,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `locations`
+
 **Manage server locations.**
 
 ### Subcommands:
+
 - `list`: List all locations
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -128,9 +145,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `profiles`
+
 **Manage server profiles.**
 
 ### Subcommands:
+
 - `list <locationId>`: List all profiles for a location
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -138,9 +157,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `scripts`
+
 **Manage account and server scripts.**
 
 ### Subcommands:
+
 - `list`: List all account scripts
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -172,9 +193,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `servers`
+
 **Manage servers.**
 
 ### Subcommands:
+
 - `list`: List all servers
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -188,7 +211,9 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
   - `-s, --slug <slug>`: Custom slug
   - `-a, --snapshotId <snapshotId>`: Restore from snapshot
   - `--wait`: Wait for server to be ready
-  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
+  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to
+    /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has
+    a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
   - `--json`, `--csv`
 - `delete <serverSlug>`: Delete a server
   - `-t, --token <token>`: API token
@@ -207,7 +232,9 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
   - `--wait`: Wait for server to reboot
 - `reinstall <serverSlug> <imageSlug>`: Reinstall a server
   - `-t, --token <token>`: API token
-  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
+  - `--userScriptId <id>`: "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to
+    /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has
+    a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps."
   - `--wait`: Wait for reinstall
 - `resize <serverSlug> <profileSlug>`: Resize a server (change profile)
   - `-t, --token <token>`: API token
@@ -229,9 +256,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `shellusers`
+
 **Manage server shell users.**
 
 ### Subcommands:
+
 - `list <slug>`: List shell users for a server
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -256,9 +285,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `snapshots`
+
 **Manage server snapshots.**
 
 ### Subcommands:
+
 - `list <serverSlug>`: List all snapshots for a server
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -276,9 +307,11 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 ---
 
 ## `sshkeys`
+
 **Manage SSH keys.**
 
 ### Subcommands:
+
 - `list`: List all SSH keys
   - `-t, --token <token>`: API token
   - `--json`, `--csv`
@@ -288,10 +321,8 @@ provision, restore-server, change-profile, set-state, delete, backup, set-hostna
 - `delete <id>`: Delete an SSH key
   - `-t, --token <token>`: API token
 
-
-
 ## Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue to report a bug or suggest a new feature.
 
+Contributions are welcome! Please feel free to submit a pull request or open an issue to report a bug or suggest a new feature.
 
 <img src="assets/webdock-cli-logo.svg" alt="Webdock CLI Logo" style="width:100%;border-radius:10px">

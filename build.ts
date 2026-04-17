@@ -65,4 +65,4 @@ async function build() {
 }
 
 await build();
-export { };
+export {};

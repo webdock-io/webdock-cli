@@ -19,7 +19,6 @@ async function pathExists(path: string): Promise<boolean> {
 	}
 }
 
-
 export async function saveConfig(config: { token?: string }): Promise<void> {
 	const configPath = getConfigPath();
 	const configDir = dirname(configPath);

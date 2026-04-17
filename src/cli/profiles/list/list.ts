@@ -3,6 +3,7 @@ import { Table } from "@cliffy/table";
 import { Webdock } from "@webdock/sdk";
 import { stringify } from "csv-stringify/sync";
 import { getToken } from "../../../config.ts";
+import { MiB_TO_GiB } from "../../../interactive/flows/servers/create.ts";
 
 export const listCommand = new Command()
 	.name("list")
@@ -35,7 +36,6 @@ export const listCommand = new Command()
 			Deno.exit(1);
 		}
 
-
 		if (options.csv) {
 			// deno-lint-ignore no-explicit-any
 			const data = response.response.body.map((item: Record<string, any>) => {
@@ -65,14 +65,16 @@ export const listCommand = new Command()
 		}
 
 		const table = new Table()
-			.header(["Slug", "Name", "CPU", "RAM", "Disk", "Price"])
+			.header(["Slug", "Name", "CPU", "RAM", "Disk", "Platform", "Price"])
 			.body(
 				response.response.body.map((profile) => [
 					profile.slug || "N/A",
 					profile.name || "N/A",
 					profile.cpu ? `${profile.cpu.threads} ${String(profile.cpu.threads).length === 1 ? " " : ""}vCPU` : "N/A",
-					profile.ram ? `${profile.ram / 1000} GB` : "N/A",
-					profile.disk ? `${profile.disk / 1000} GB` : "N/A",
+					profile.ram ? `${Math.round(profile.ram * MiB_TO_GiB)} GB` : "N/A",
+					profile.disk ? `${Math.round(profile.disk * MiB_TO_GiB)} GB` : "N/A",
+					profile.platform ? `${profile.platform}  ` : " ",
+
 					profile.price ? `${profile.price.amount / 100} ${profile.price.currency}` : "N/A",
 				]),
 			)

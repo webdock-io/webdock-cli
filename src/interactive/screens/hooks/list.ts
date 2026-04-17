@@ -46,7 +46,7 @@ export async function hooksListScreen() {
 	if (action === "delete") {
 		const confirmDelete = await Confirm.prompt(
 			colors.red("⚠ Are you sure you want to delete this webhook?") +
-			" This action cannot be undone.",
+				" This action cannot be undone.",
 		);
 
 		if (!confirmDelete) {

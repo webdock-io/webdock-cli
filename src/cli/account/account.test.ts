@@ -14,7 +14,7 @@ Deno.test({
 				"--allow-read",
 				"--allow-write",
 				"--allow-net",
-					"--allow-sys",
+				"--allow-sys",
 				"--allow-run",
 				scriptPath,
 				"account",

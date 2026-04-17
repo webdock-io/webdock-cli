@@ -6,9 +6,7 @@ import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "./navigator.ts";
 import { open } from "@opensrc/deno-open";
 
-
 export async function main() {
-
 	const token = await getToken();
 	const client = new Webdock(token);
 	const response = await client.account.info();
@@ -86,7 +84,7 @@ export async function main() {
 			await navigator.goToScriptsMenu();
 			break;
 		case "HELP":
-			console.log("Contact out support team at: https://webdock.io/en/support")
+			console.log("Contact out support team at: https://webdock.io/en/support");
 			break;
 		case "EXIT":
 			console.log("hasta la vista 👋");

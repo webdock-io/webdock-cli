@@ -16,22 +16,22 @@ export async function createSSHKey() {
 		validate: (input) => input.length > 2 || "Name must be at least 3 characters",
 	});
 
-	let publicKey = ""
+	let publicKey = "";
 	const keyPathPickMethod = await Select.prompt({
 		message: "How would you like to provide your key?",
 		options: [
 			{
 				name: "Select a file from your drive",
-				value: "PICK"
+				value: "PICK",
 			},
 			{
 				name: "Enter the key manually",
-				value: "WRITE"
-			}
-		]
-	})
+				value: "WRITE",
+			},
+		],
+	});
 	if (keyPathPickMethod == "PICK") {
-		const path = await new PathPicker().pickFile()
+		const path = await new PathPicker().pickFile();
 		publicKey = await Deno.readTextFile(path);
 	} else {
 		publicKey = await multiLineInput();

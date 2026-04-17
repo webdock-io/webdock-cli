@@ -55,7 +55,6 @@ Deno.test({
 
 			const slugs = extractSlugsFromStdOut(stdout);
 			tempServerSlug = slugs[0] ?? "";
- 			
 		});
 
 		await t.step("[CLI] GET Temp Server", async (it) => {

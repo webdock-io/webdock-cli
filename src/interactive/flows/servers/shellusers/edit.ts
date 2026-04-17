@@ -65,7 +65,7 @@ export async function updateShellUserKeys(
 
 	const response = await client.shellUsers.edit({
 		id: shellUserId,
-		keys: (selected_keys ?? []),
+		keys: selected_keys ?? [],
 		slug: serverSlug,
 	});
 	spinner.stop();

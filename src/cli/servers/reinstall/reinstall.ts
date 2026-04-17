@@ -2,12 +2,15 @@ import { colors } from "@cliffy/ansi/colors";
 import { Command } from "@cliffy/command";
 import { Webdock } from "@webdock/sdk";
 import { getToken } from "../../../config.ts";
- 
+
 export const reinstallCommand = new Command()
 	.description("Reinstall a server")
 	.arguments("<serverSlug:string> <imageSlug:string>")
 	.option("-t, --token <token:string>", "API token for authentication")
-	.option("--userScriptId <userScriptId:number>", "Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.")
+	.option(
+		"--userScriptId <userScriptId:number>",
+		"Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.",
+	)
 	.option(
 		"--wait",
 		"Wait until the server is fully up and running before exiting",
@@ -18,7 +21,7 @@ export const reinstallCommand = new Command()
 		const response = await client.servers.reinstall({
 			imageSlug,
 			serverSlug,
-			...(	options.userScriptId ? { userScriptId: options.userScriptId } : {}),
+			...(options.userScriptId ? { userScriptId: options.userScriptId } : {}),
 		});
 
 		if (!response.success) {
@@ -27,14 +30,11 @@ export const reinstallCommand = new Command()
 		}
 
 		if (options.wait) {
-			
 			const waitResult = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
 			if (!waitResult.success) {
 				console.error(waitResult.error);
 				Deno.exit(1);
 			}
-
-		 
 		}
 
 		console.log(
