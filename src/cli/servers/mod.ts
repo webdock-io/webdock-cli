@@ -30,7 +30,11 @@ export const serversCommand = new Command()
 	).hidden()
 	.command("identity", serverIdentity)
 	.command("settings", serverSettings)
+	// ---- START -----
+	// Arni wants both 
 	.command("ssl", serverSsl)
+	.command("certbot", serverSsl)
+	// ---- END -----
 	.command("list", listCommand)
 	.command("get", getCommand)
 	.command("create", createCommand)

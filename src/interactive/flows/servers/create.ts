@@ -32,9 +32,8 @@ export async function createWebdockServer() {
 		options: profiles.response.body
 			.sort((a, b) => a.disk - b.disk)
 			.map((p) => ({
-				name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${
-					(p.disk * MiB_TO_GiB).toFixed(0)
-				}GB SSD`,
+				name: `${p.name.padEnd(longestName + 2)} | ${p.cpu.threads}vCPU | ${String((Math.ceil(p.ram * MiB_TO_GiB)).toFixed(0)).padEnd(3, " ")}GB RAM | ${(p.disk * MiB_TO_GiB).toFixed(0)
+					}GB SSD`,
 				value: p.slug,
 			}))
 			.concat(goBackOption),
@@ -144,8 +143,13 @@ export async function createWebdockServer() {
 			},
 
 			{
-				name: "Yes, run an account script",
+				name: "Yes, run one of my scripts",
 				value: "ACCOUNT",
+			},
+
+			{
+				name: "Yes, run one of webdock's scripts",
+				value: "WEBDOCK",
 			},
 		],
 	});
@@ -161,12 +165,42 @@ export async function createWebdockServer() {
 		if (accountScripts.response.body.length == 0) {
 			console.log("Skipping: Found no account scripts");
 		} else {
+			const ll = accountScripts.response.body.reduce((prev, curr) => {
+				return curr.name.length > prev ? curr.name.length : prev;
+			}, 0);
+			const nameWidth = Math.min(ll, 30);
 			const selectedScript = await Select.prompt({
 				message: "Choose script to run after provisiong",
 				options: accountScripts.response.body
 					.map((script, idx) => {
 						return {
-							name: `(${String(idx).padEnd(3, " ")})${script.name} ${script.description}`,
+							name: `(${String(idx + 1).padStart(3, "0")}) ${script.name.slice(0, 30).padEnd(nameWidth)} - #${script.slug}`,
+							value: script.slug,
+						};
+					}),
+			});
+			userScriptId = selectedScript;
+		}
+	} else if (shouldRunScript === "WEBDOCK") {
+		const accountScripts = await client.webdock.scripts.list()
+		if (!accountScripts.success) {
+			console.error(colors.red(accountScripts.error));
+			return;
+		}
+
+		if (accountScripts.response.body.length == 0) {
+			console.log("Skipping: Found no account scripts");
+		} else {
+			const ll = accountScripts.response.body.reduce((prev, curr) => {
+				return curr.name.length > prev ? curr.name.length : prev;
+			}, 0);
+			const nameWidth = Math.min(ll, 30);
+			const selectedScript = await Select.prompt({
+				message: "Choose script to run after provisiong",
+				options: accountScripts.response.body
+					.map((script, idx) => {
+						return {
+							name: `(${String(idx + 1).padStart(3, "0")}) ${script.name.slice(0, 30).padEnd(nameWidth)} - #${script.slug}`,
 							value: script.slug,
 						};
 					}),
