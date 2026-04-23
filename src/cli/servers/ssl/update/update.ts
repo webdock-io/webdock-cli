@@ -7,7 +7,7 @@ export const renewServerSslCommand = new Command()
 	.description("Renew SSL certificates for a server.")
 	.arguments("<serverSlug:string>")
 	.option("--wait", "wait for operation to finish")
-	.option("--domains <domains:string>", "Domains to include in the certificate (newline or comma separated)", { required: true })
+	.option("--domains <domains:string[]>", "Domains to include in the certificate (newline or comma separated)", { required: true })
 	.option("--email <email:string>", "Email address for certificate notifications", { required: true })
 	.option("--forceSSL <forceSSL:boolean>", "If true, enforce SSL/TLS configuration for the renewed domains.", { default: true })
 	.option("-t, --token <token:string>", "API token for authentication")
@@ -27,7 +27,8 @@ export const renewServerSslCommand = new Command()
 		}
 
 		if (options.wait) {
-			const callback = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			const callbackId = (response as unknown as { response: { headers: { "x-callback-id": string } } }).response.headers["x-callback-id"];
+			const callback = await client.operation.waitForEventToEnd(callbackId);
 			if (!callback.success) {
 				console.error(callback.error);
 				Deno.exit(1);

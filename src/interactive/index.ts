@@ -4,12 +4,13 @@ import { Select } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";
 import { colors } from "@cliffy/ansi/colors";
 import { navigator } from "./navigator.ts";
-import { open } from "@opensrc/deno-open";
+import goodbyes from "./goodbyes.ts"
 
 export async function main() {
 	const token = await getToken();
 	const client = new Webdock(token);
 	const response = await client.account.info();
+	const i = Math.floor(Math.random() * goodbyes.length);
 
 	if (!response.success) {
 		console.error(
@@ -86,8 +87,8 @@ export async function main() {
 		case "HELP":
 			console.log("Contact out support team at: https://webdock.io/en/support");
 			break;
-		case "EXIT":
-			console.log("hasta la vista 👋");
+		default:
+			console.log(goodbyes[i]);
 			Deno.exit(0);
 	}
 }

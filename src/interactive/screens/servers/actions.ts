@@ -56,6 +56,15 @@ export async function serverActionsScreen(slug: string) {
 		case "FETCH":
 			await navigator.runFetchFile(slug);
 			break;
+		case "IDENTITY":
+			await navigator.runUpdateServerIdentity(slug);
+			break;
+		case "SSL":
+			await navigator.runRenewServerSsl(slug);
+			break;
+		case "SETTINGS":
+			await navigator.runUpdateServerSettings(slug);
+			break;
 		case "METRICS":
 			await navigator.runMetrics(slug);
 			break;
@@ -76,6 +85,9 @@ export async function serverActionsScreen(slug: string) {
 			break;
 		case "ARCHIVE":
 			await navigator.runArchive(slug);
+			break;
+		case "UNCANCEL":
+			await navigator.runUncancelDelete(slug);
 			break;
 		case "SHELL":
 			await navigator.goToShellUsersMenu(slug);

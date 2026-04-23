@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"lib": [
 			"deno.ns",
-			"deno",
 			"dom"
 		],
 		"strict": true
@@ -30,14 +29,15 @@
 		"@std/path": "jsr:@std/path@^1.1.4",
 		"@std/semver": "jsr:@std/semver@^1.0.8",
 		"@std/testing": "jsr:@std/testing@^1.0.17",
-		"axios": "npm:axios@^1.13.6",
-		"csv": "npm:csv@^6.4.1",
-		"csv-stringify": "npm:csv-stringify@^6.6.0",
+		"axios": "npm:axios@^1.15.0",
+		"csv": "npm:csv@^6.5.1",
+		"csv-stringify": "npm:csv-stringify@^6.7.0",
 		"drivelist": "npm:drivelist@^12.0.2",
 		"form-data": "npm:form-data@^4.0.5",
-		"systeminformation": "npm:systeminformation@^5.31.4",
+		"sharp": "npm:sharp@^0.34.5",
+		"systeminformation": "npm:systeminformation@^5.31.5",
 		"zod": "npm:zod@^3.25.76",
-		"@webdock/sdk": "npm:@webdock/sdk@^1.1.104"
+		"@webdock/sdk": "npm:@webdock/sdk@^1.1.109"
 	},
 	"fmt": {
 		"lineWidth": 200,

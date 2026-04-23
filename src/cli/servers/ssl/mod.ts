@@ -11,4 +11,5 @@ export const serverSsl = new Command()
 			serverSsl.showHelp();
 		}),
 	)
-	.command("update", renewServerSslCommand);
+	.command("update", renewServerSslCommand)
+	.command("run", renewServerSslCommand);

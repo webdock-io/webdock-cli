@@ -27,6 +27,10 @@ interface INavigator {
 	runReinstall(slug: string): Promise<void>;
 	runResize(slug: string): Promise<void>;
 	runArchive(slug: string): Promise<void>;
+	runUncancelDelete(slug: string): Promise<void>;
+	runUpdateServerIdentity(slug: string): Promise<void>;
+	runUpdateServerSettings(slug: string): Promise<void>;
+	runRenewServerSsl(slug: string): Promise<void>;
 	runDeleteSnapshot(serverSlug: string, snapshotId: number): Promise<void>;
 	runRestoreSnapshot(serverSlug: string, snapshotId: number): Promise<void>;
 	runDeleteScript(id: number): Promise<void>;
@@ -156,6 +160,22 @@ export const navigator: INavigator = {
 	async runArchive(slug: string): Promise<void> {
 		const { archive } = await import("./flows/servers/archive.ts");
 		return archive(slug);
+	},
+	async runUncancelDelete(slug: string): Promise<void> {
+		const { uncancelServerDelete } = await import("./flows/servers/uncancel.ts");
+		return uncancelServerDelete(slug);
+	},
+	async runUpdateServerIdentity(slug: string): Promise<void> {
+		const { updateServerIdentity } = await import("./flows/servers/identity.ts");
+		return updateServerIdentity(slug);
+	},
+	async runUpdateServerSettings(slug: string): Promise<void> {
+		const { updateServerSettings } = await import("./flows/servers/settings.ts");
+		return updateServerSettings(slug);
+	},
+	async runRenewServerSsl(slug: string): Promise<void> {
+		const { renewServerSsl } = await import("./flows/servers/ssl.ts");
+		return renewServerSsl(slug);
 	},
 	async runDeleteSnapshot(serverSlug: string, snapshotId: number): Promise<void> {
 		const { deleteSnapshot } = await import("./flows/snapshots/delete.ts");
