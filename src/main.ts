@@ -1,4 +1,4 @@
-#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-net --allow-sys --allow-run
+#!/usr/bin/env -S deno run --allow-env --allow-read --allow-write --allow-net --allow-sys --allow-run --allow-ffi
 
 import { Command } from "@cliffy/command";
 import { accountCommand } from "./cli/account/mod.ts";
@@ -19,7 +19,7 @@ import { updateCommand } from "./cli/update.ts";
 
 export const cli = new Command()
 	.name("webdock")
-	.version("v1.0.41")
+	.version("v1.0.42")
 	.globalType("event-type", eventTypeEnum)
 	.description("Webdock CLI - A command-line interface for the Webdock API")
 	.default("it")

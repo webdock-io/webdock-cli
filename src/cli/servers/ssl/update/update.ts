@@ -27,7 +27,8 @@ export const renewServerSslCommand = new Command()
 		}
 
 		if (options.wait) {
-			const callback = await client.operation.waitForEventToEnd(response.response.headers["x-callback-id"]);
+			const callbackId = (response as unknown as { response: { headers: { "x-callback-id": string } } }).response.headers["x-callback-id"];
+			const callback = await client.operation.waitForEventToEnd(callbackId);
 			if (!callback.success) {
 				console.error(callback.error);
 				Deno.exit(1);

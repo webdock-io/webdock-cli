@@ -8,8 +8,8 @@ export const reinstallCommand = new Command()
 	.arguments("<serverSlug:string> <imageSlug:string>")
 	.option("-t, --token <token:string>", "API token for authentication")
 	.option(
-		"--userScriptId <userScriptId:number>",
-		"Optional user/account script ID. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.",
+		"--userScriptId <userScriptId:string>",
+		"Optional user/account or library script ID/slug. Retrieve it via GET /account/scripts or from the Scripts page in the dashboard. If provided, the script is deployed to /root/auto-deploy-script and executed once provisioning finishes (after all provisioning actions, including SSL certificate generation). The script is executed from the command line; ensure it has a valid shebang (e.g. #!/bin/bash, #!/usr/bin/env python3) and is self-contained. Use this to auto-deploy software, credentials, or other setup steps.",
 	)
 	.option(
 		"--wait",

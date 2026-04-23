@@ -21,6 +21,22 @@ export default [
 		name: `Download File - Retrieve a file from the server`,
 	},
 	{
+		value: "IDENTITY",
+		name: `Identity - Update main domain and alias domains`,
+	},
+	{
+		value: "SSL",
+		name: `SSL - Run Certbot and renew certificates`,
+	},
+	{
+		value: "SETTINGS",
+		name: `Settings - Update web root and related config`,
+	},
+	{
+		value: "RESIZE",
+		name: `Upgrade Hardware`,
+	},
+	{
 		value: "SCRIPTS",
 		name: `Server Scripts`,
 	},
@@ -28,14 +44,17 @@ export default [
 		value: "SNAPSHOTS",
 		name: `Snapshots - Create, list, or restore snapshots`,
 	},
-
+	{
+		value: "ARCHIVE",
+		name: `Archive Server - Put this server in cold storage and free up resources and IPs`,
+	},
 	{
 		value: "REINSTALL",
 		name: `Reinstall OS - Fresh system installation`,
 	},
 	{
-		value: "ARCHIVE",
-		name: `Archive Server - Put this server in cold storage and free up resources and IPs`,
+		value: "UNCANCEL",
+		name: `Cancel Scheduled Deletion`,
 	},
 	{
 		value: "METRICS",

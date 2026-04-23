@@ -1,4 +1,4 @@
-[
+export default [
     "Smell ya later 👃",
     "Until fate reunites us… or tomorrow 😌",
     "Farewell, mortal (I’ll text you later)",

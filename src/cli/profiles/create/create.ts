@@ -20,12 +20,23 @@ export const createCommand = new Command()
 	.action(async (options) => {
 		const token = await getToken(options.token);
 		const client = new Webdock(token);
+		const supportedPlatforms = new Set(["epyc_vps", "intel_vps"]);
+
+		if (!supportedPlatforms.has(options.platform)) {
+			console.error(
+				colors.red(
+					`Unsupported platform '${options.platform}'. Use one of: ${Array.from(supportedPlatforms).join(", ")}`,
+				),
+			);
+			Deno.exit(1);
+		}
+		const platform = options.platform as "epyc_vps" | "intel_vps";
 
 		const response = await client.profiles.create({
 			cpu_threads: options.cores,
 			disk_space: options.disk,
 			network_bandwidth: options.network,
-			platform: options.platform,
+			platform,
 			ram: options.ram,
 		});
 
