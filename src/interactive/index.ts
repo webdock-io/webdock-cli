@@ -27,7 +27,7 @@ export async function main() {
 			[
 				colors.bold(colors.magenta("Balance:")),
 				colors.red(
-					`${Number(response.response.body.accountBalanceRaw) / 1000} ${response.response.body.accountBalanceCurrency}`,
+					`${Number(response.response.body.accountBalanceRaw) / 100} ${response.response.body.accountBalanceCurrency}`,
 				),
 			],
 		])
