@@ -14,7 +14,8 @@ const MiB_TO_GB = 0.001048576;
 
 export async function resizeServerAction(slug: string) {
 	const token = await getToken();
-	const client = new Webdock(token);
+	// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+	const client = new Webdock({ token: token, secret_dev_client: "cli" });
 	const spinner = new Spinner();
 
 	const serverInfo = await client.servers.getBySlug({ serverSlang: slug });

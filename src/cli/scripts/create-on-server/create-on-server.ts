@@ -42,7 +42,8 @@ export const serverScriptsCreateCommand = new Command()
 	.action(
 		async (options, serverSlug: string, scriptId: number, path) => {
 			const token = await getToken(options.token);
-			const client = new Webdock(token);
+			// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+			const client = new Webdock({ token: token, secret_dev_client: "cli" });
 			const sanitizedPath = await sanitizePath(path);
 			if (!sanitizedPath) {
 				serverScriptsCreateCommand.showHelp();

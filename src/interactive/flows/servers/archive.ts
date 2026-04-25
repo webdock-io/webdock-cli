@@ -9,7 +9,8 @@ import { Confirm } from "@cliffy/prompt";
 export async function archive(slug: string) {
 	const spinner = new Spinner();
 	const token = await getToken();
-	const client = new Webdock(token);
+	// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+	const client = new Webdock({ token: token, secret_dev_client: "cli" });
 	const confirm = await Confirm.prompt({
 		message: "Confirm Server Archiving:",
 	});
