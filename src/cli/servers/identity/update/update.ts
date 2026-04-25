@@ -17,7 +17,8 @@ export const updateserverIdentity = new Command()
 	.option("-t, --token <token:string>", "API token for authentication")
 	.action(async (options, serverSlug) => {
 		const token = await getToken(options.token);
-		const client = new Webdock(token);
+		// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+		const client = new Webdock({ token: token, secret_dev_client: "cli" });
 		const response = await client.servers.identity.update({
 			serverSlug: serverSlug,
 			maindomain: options.maindomain,

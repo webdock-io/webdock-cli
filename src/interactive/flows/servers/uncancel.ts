@@ -15,7 +15,8 @@ export async function uncancelServerDelete(slug: string) {
 	}
 
 	const token = await getToken();
-	const client = new Webdock(token);
+	// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+	const client = new Webdock({ token: token, secret_dev_client: "cli" });
 	const response = await client.servers.cancelDelete({
 		serverSlug: slug,
 	});

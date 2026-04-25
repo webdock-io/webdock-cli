@@ -8,7 +8,8 @@ import { navigator } from "../../navigator.ts";
 
 export async function hooksListScreen() {
 	const token = await getToken();
-	const client = new Webdock(token);
+	// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+	const client = new Webdock({ token: token, secret_dev_client: "cli" });
 	console.log(colors.bold.brightBlue("Fetching webhooks..."));
 
 	const hooks = await client.hooks.list();

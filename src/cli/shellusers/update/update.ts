@@ -25,7 +25,8 @@ export const updateCommand = new Command()
 	.option("-t, --token <token:string>", "API token for authentication")
 	.action(async (options, slug, id) => {
 		const token = await getToken(options.token);
-		const client = new Webdock(token);
+		// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+		const client = new Webdock({ token: token, secret_dev_client: "cli" });
 		const response = await client.shellUsers.edit({
 			keys: options.publicKeys || [],
 			slug: slug,

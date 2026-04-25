@@ -28,7 +28,8 @@ export const archiveCommand = new Command()
 		}
 
 		const token = await getToken(options.token);
-		const client = new Webdock(token);
+		// @ts-expect-error: secret_dev_client is a secret param, only webdock devs should use
+		const client = new Webdock({ token: token, secret_dev_client: "cli" });
 		const response = await client.servers.archive({
 			serverSlug: slug,
 		});
