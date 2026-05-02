@@ -180,6 +180,10 @@ export async function createWebdockServer() {
 		return navigator.goToMain();
 	}
 
+	const cost = await client.profiles.list({
+		profileSlug: profileSlug,
+		locationId: "dk"
+	})
 	console.log("\nProvisioning summary:");
 	console.log(`Name: ${serverName}`);
 	console.log(`Location: ${locationId}`);
@@ -188,6 +192,14 @@ export async function createWebdockServer() {
 	if (selectedScript) {
 		console.log(`Provisioning script: [${selectedScript.source}] ${selectedScript.name} (#${selectedScript.slug})`);
 	}
+	if (!cost.success) {
+		console.error(cost.error)
+		return
+	}
+
+	const profile = cost.response.body[0]
+	console.log("Price: ", profile.price.amount / 100, profile.price.currency)
+
 
 	const confirm = await Confirm.prompt({
 		message: "Confirm server creation:",

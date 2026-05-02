@@ -1,5 +1,5 @@
 import { colors } from "@cliffy/ansi/colors";
-import { Confirm, Select } from "@cliffy/prompt";
+import { Confirm } from "@cliffy/prompt";
 import { Table } from "@cliffy/table";
 import { Spinner } from "@std/cli/unstable-spinner";
 import { Webdock } from "@webdock/sdk";
