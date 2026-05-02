@@ -53,7 +53,9 @@ export const updateCommand = new Command()
 			} else {
 				console.log(`Already up to date: ${currentVersion}`);
 			}
-		} catch {
+		} catch (err) {
+			console.error(err);
+
 			spinner.stop();
 			console.log("Failed to check for updates");
 		}
