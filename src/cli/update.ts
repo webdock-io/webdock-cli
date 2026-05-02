@@ -53,10 +53,10 @@ export const updateCommand = new Command()
 			} else {
 				console.log(`Already up to date: ${currentVersion}`);
 			}
-		} catch (err) {
-			console.error(err);
-
+		} catch {
 			spinner.stop();
-			console.log("Failed to check for updates");
+			console.error("Failed to check for updates.");
+			console.error("Please visit the GitHub releases page and install the latest Webdock CLI version:");
+			console.error(">> https://github.com/webdock-io/webdock-cli");
 		}
 	});
